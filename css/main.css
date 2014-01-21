@@ -1,0 +1,50 @@
+body {
+    background: #333;
+    color: #fff;
+    font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+}
+
+#holder {
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    border: 2px dashed #fff;
+}
+
+#info {
+    width: 200px;
+    height: 500px;
+    position: absolute;
+    left: 580px;
+    top: 50px;
+    border: 2px dashed #fff;
+    text-align: center;
+}
+
+.score {
+    font-size: 4em;
+    display: block;
+}
+
+#redScore {
+    position: absolute;
+    top: 140px;
+    left: 60px;
+    color: red;
+}
+
+#whiteScore {
+    position: absolute;
+    top: 220px;
+    left: 60px;
+    color: white;
+}
+
+#current-block {
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+}
+
