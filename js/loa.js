@@ -13,19 +13,38 @@ var LOA = function() {
     var BLACK = 'b';
     var EMPTY = ' ';
 
-    // PUBLIC stuff
-    var startPosition =
-        [[" ", "w", "w", "w", "w", "w", "w", " "]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,["b", " ", " ", " ", " ", " ", " ", "b"]
-        ,[" ", "w", "w", "w", "w", "w", "w", " "]
+    var START_POS_STR =
+        [ ".bbbbbb."
+        , "w......w"
+        , "w......w"
+        , "w......w"
+        , "w......w"
+        , "w......w"
+        , "w......w"
+        , ".bbbbbb."
         ];
 
-    // returns a list of possible moves [(x,y)] by a given checker on a given board
+    function parsePosition(rows) {
+
+        var convCell = function(c) {
+            // we use dots for empty cells, since it's easier to read
+            if (c === '.') { return ' ' }
+            return c.toLowerCase();
+        }
+
+        var transposedBoard = _.map(rows, function(row) {
+            return _.map(row.split(""), convCell);
+        });
+
+
+        // `zip` here transposes the board, `apply` is needed to pass
+        // array elements as separate arguments
+        return _.zip.apply(null, transposedBoard);
+    }
+
+    var startPosition = parsePosition(START_POS_STR);
+
+    // Returns a list of possible moves [(x,y)] by a given checker on a given board
     // coordinates are 1-based, board is a 2-dimensional array
     function possibleMoves(x1, y1, board) {
         var x0 = x1 - 1;
@@ -184,6 +203,7 @@ var LOA = function() {
     return {
         possibleMoves : possibleMoves,
         startPosition : startPosition,
+        parsePosition : parsePosition,
 
         // exported only for tests
         // TODO: figure out how to do this properly

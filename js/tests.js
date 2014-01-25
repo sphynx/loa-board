@@ -12,6 +12,41 @@ function neDiagonalAction(x0, y0, board)
 
 // HELPERS
 
+
+var emptyPosStr =
+  [ "........"
+  , "........"
+  , "........"
+  , "........"
+  , "........"
+  , "........"
+  , "........"
+  ];
+
+var termPosStr =
+  [ "........"
+  , "ww......"
+  , ".....w.."
+  , ".w.b...."
+  , "..wb.b.."
+  , ".bb.b..."
+  , ".....b.."
+  , "....w..."
+  ];
+
+var termPos = LOA.parsePosition(termPosStr);
+
+var s0Expected =
+    [[" ", "w", "w", "w", "w", "w", "w", " "]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,["b", " ", " ", " ", " ", " ", " ", "b"]
+    ,[" ", "w", "w", "w", "w", "w", "w", " "]
+    ];
+
 var s0 = LOA.startPosition;
 
 function vert(board, x0, expected) {
@@ -36,6 +71,10 @@ function ne(board, x0, y0, expected) {
 
 
 // TESTS
+
+test("Position parsing", function() {
+    deepEqual(s0, s0Expected, "start position");
+});
 
 test("Vertical in start position", function() {
     vert(s0, 0, 6);
