@@ -3,6 +3,7 @@ var CH;
 (function() {
      // to make global context more apparent
      var global = this;
+
      var enableLogging = false;
 
      var utils = DS_utils;
@@ -107,6 +108,10 @@ var CH;
              if (model.selected !== null) { model.selected.attr("fill", model.selected.team); }
              checker.attr("fill", "yellow");
              model.selected = checker;
+             x1 = (checker.attr("cx") - 25) / 50;
+             y1 = 9 - (checker.attr("cy") - 25) / 50;
+             console.log(x1, y1);
+             console.log(LOA.possibleMoves(x1, y1, LOA.startPosition));
          }
 
          function initUI() {
