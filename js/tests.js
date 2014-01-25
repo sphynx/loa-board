@@ -2,6 +2,8 @@
 // LOA API we want to test:
 
 /*
+function parsePosition(rows)
+function possibleMoves(x1, y1, board)
 function checkMove(x0, y0, dx, dy, action, color, board)
 function otherColor(color)
 function verticalAction(x0, y0, board)
@@ -69,6 +71,10 @@ function ne(board, x0, y0, expected) {
           "NE diagonal for start position in x0={0}, y0={1}".format(x0, y0));
 }
 
+function moves(board, x1, y1, expected) {
+    deepEqual(LOA.possibleMoves(x1, y1, board).sort(), expected.sort(),
+              "Moves in start position for x1={0} and y1={1}".format(x1, y1));
+}
 
 // TESTS
 
@@ -83,7 +89,6 @@ test("Vertical actions in start position", function() {
     }
     vert(s0, 7, 6);
 });
-
 
 test("Horizontal actions in start position", function() {
     horiz(s0, 0, 6);
@@ -115,4 +120,21 @@ test("NE diagonal actions in start position", function() {
             ne(s0, i, j, expected);
         })
     });
+});
+
+test("Possible moves", function() {
+    // no moves from empty cells
+    _.each(_.range(8), function(i) {
+        moves(s0, i, i, []);
+    });
+    moves(s0, 1, 2, []);
+    moves(s0, 2, 4, []);
+    moves(s0, 6, 3, []);
+
+    // normal moves
+    moves(s0, 0, 1, [[0,7], [2,1], [2,3]]);
+    moves(s0, 1, 0, [[1,2], [3,2], [7,0]]);
+    moves(s0, 5, 0, [[3,2], [5,2], [7,2]]);
+    moves(s0, 0, 6, [[0,0], [2,4], [2,6]]);
+    moves(s0, 7, 3, [[5,1], [5,3], [5,5]]);
 });
