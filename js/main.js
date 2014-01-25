@@ -108,10 +108,12 @@ var CH;
              if (model.selected !== null) { model.selected.attr("fill", model.selected.team); }
              checker.attr("fill", "yellow");
              model.selected = checker;
-             x1 = (checker.attr("cx") - 25) / 50;
-             y1 = 9 - (checker.attr("cy") - 25) / 50;
-             console.log(x1, y1);
-             console.log(LOA.possibleMoves(x1, y1, LOA.startPosition));
+             x0 = (checker.attr("cx") - 75) / 50;
+             y0 = 7 - (checker.attr("cy") - 75) / 50;
+
+             // log it temporarily
+             console.log(x0, y0);
+             console.log(LOA.possibleMoves(x0, y0, LOA.startPosition));
          }
 
          function initUI() {
