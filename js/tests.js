@@ -76,7 +76,7 @@ test("Position parsing", function() {
     deepEqual(s0, s0Expected, "start position");
 });
 
-test("Vertical in start position", function() {
+test("Vertical actions in start position", function() {
     vert(s0, 0, 6);
     for (var i = 1; i < 7; i++) {
         vert(s0, i, 2);
@@ -85,7 +85,7 @@ test("Vertical in start position", function() {
 });
 
 
-test("Horizontal in start position", function() {
+test("Horizontal actions in start position", function() {
     horiz(s0, 0, 6);
     for (var i = 1; i < 7; i++) {
         horiz(s0, i, 2);
@@ -93,13 +93,26 @@ test("Horizontal in start position", function() {
     horiz(s0, 7, 6);
 });
 
-test("NW diagonal in start position", function() {
-    nw(s0, 0, 0, 0);
-    nw(s0, 0, 1, 2);
-    nw(s0, 1, 0, 2);
-    nw(s0, 1, 1, 2);
-    nw(s0, 7, 7, 0);
-    nw(s0, 7, 0, 0);
-    nw(s0, 2, 3, 2);
+test("NW diagonal actions in start position", function() {
+    _.each(_.range(8), function(i) {
+        _.each(_.range(8), function(j) {
+            var expected =
+                ( i === 7-j ||
+                 (i === 0 && j === 0) ||
+                 (i === 7 && j === 7)) ? 0 : 2;
+            nw(s0, i, j, expected);
+        })
+    });
 });
 
+test("NE diagonal actions in start position", function() {
+    _.each(_.range(8), function(i) {
+        _.each(_.range(8), function(j) {
+            var expected =
+                ( i === j ||
+                 (i === 0 && j === 7) ||
+                 (i === 7 && j === 0)) ? 0 : 2;
+            ne(s0, i, j, expected);
+        })
+    });
+});
