@@ -1,13 +1,6 @@
-var CH;
-
 (function() {
      // to make global context more apparent
      var global = this;
-
-     var enableLogging = false;
-
-     var utils = DS_utils;
-     var log = enableLogging ? utils.log : function(){};
 
      // constants
      var CELL_SIZE = 50, // board cell size
@@ -16,7 +9,7 @@ var CH;
          BOARD_SIZE = ROWS * CELL_SIZE; // board size
 
      // constructor, available in global namespace
-     global.CH_Game = function() {
+     global.LOABoard = function() {
          // private instance variable
          var raphael; // Raphael object
 
@@ -26,25 +19,7 @@ var CH;
              red: ko.observableArray([]),
              whiteMove: ko.observable(true),
              selected: null,
-
-             changeMove: function() {
-                 this.whiteMove(!this.whiteMove());
-             },
-
-             reset: function() {
-                 this.white([]);
-                 this.red([]);
-                 this.whiteMove(true);
-             },
-
          };
-
-         // dependent observable should be defined separately, alas.
-         // see KO documentation for the gory details
-         model.all = ko.dependentObservable(
-             function() {
-                 return this.white().concat(this.red());
-             }, model);
 
          model.currentMove = ko.dependentObservable(
              function() {
@@ -74,14 +49,8 @@ var CH;
              return piece;
          }
 
-         function resetPieces() {
+         function setPieces() {
              var i, x, y;
-
-             // clean all the pieces and reset model
-             for (i = 0; i < model.all().length; i++) {
-                 model.all()[i].remove();
-             }
-             model.reset();
 
              // setup new red and white pieces, push them into model
              for (i = 2; i <= ROWS-1; i++) {
@@ -116,15 +85,11 @@ var CH;
              console.log(LOA.possibleMoves(x0, y0, LOA.startPosition));
          }
 
-         function initUI() {
-             raphael = Raphael("holder", 500, 500);
-         }
-
          function init() {
-             initUI();
+             raphael = Raphael("holder", 500, 500);
              ko.applyBindings(model);
              drawBoard();
-             resetPieces();
+             setPieces();
          }
 
          // public interface
@@ -138,7 +103,6 @@ var CH;
 // main entry point wrapped in jQuery $(...)
 $(
     function() {
-        CH = CH_Game();
-        CH.init();
+        LOABoard().init();
     }
 );
