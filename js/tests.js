@@ -49,7 +49,7 @@ var s0Expected =
     ,[" ", "w", "w", "w", "w", "w", "w", " "]
     ];
 
-var s0 = LOA.startPosition;
+var s0 = LOA.startPosition(8,8);
 
 function vert(board, x0, expected) {
     equal(LOA.verticalAction(x0, 0, board), expected,
