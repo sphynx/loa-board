@@ -1,0 +1,11 @@
+* switch current move
+* allow only current player to move
+* fix number of remaining checkers in the interface
+* structure move visualization better, refactor it
+* load HTML page from LG
+* parse the board from HTML
+* make board checkered, improve colors, animations, etc.
+* handle 9x9 black hole variant
+* handle other variants
+* display moves made and allow revert to any moves before
+* load past moves from LG
