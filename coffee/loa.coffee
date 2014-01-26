@@ -5,16 +5,16 @@ WHITE = 'w'
 BLACK = 'b'
 EMPTY = ' '
 
-START_POS_STR =
-  [ ".bbbbbb."
-  , "w......w"
-  , "w......w"
-  , "w......w"
-  , "w......w"
-  , "w......w"
-  , "w......w"
-  , ".bbbbbb."
-  ];
+replicate = (n, str) ->
+  _(n).times(-> str)
+
+genNormalStartPos = (rows, cols) ->
+  black_row = EMPTY + replicate(cols-2, BLACK).join("") + EMPTY
+  white_row = WHITE + replicate(cols-2, EMPTY).join("") + WHITE
+  arr = replicate(rows-2, white_row)
+  arr.unshift(black_row)
+  arr.push(black_row)
+  arr
 
 # Functions
 parsePosition = (rows) ->
@@ -29,8 +29,8 @@ parsePosition = (rows) ->
   # array elements as separate arguments
   _.zip.apply(null, tboard)
 
-startPosition =
-  parsePosition START_POS_STR
+startPosition = (rows, cols) ->
+  parsePosition(genNormalStartPos(rows, cols))
 
 verticalAction = (x0, _y0, board) ->
   _.reduce(
@@ -146,6 +146,9 @@ otherColor = (color) -> switch color
 # Public API
 global = this
 global.LOA =
+  WHITE : WHITE
+  BLACK : BLACK
+  EMPTY : EMPTY
   possibleMoves : possibleMoves
   startPosition : startPosition
   parsePosition : parsePosition

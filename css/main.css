@@ -5,8 +5,8 @@ body {
 }
 
 #holder {
-    width: 500px;
-    height: 500px;
+    width: 550px;
+    height: 550px;
     position: absolute;
     left: 50px;
     top: 50px;
@@ -15,9 +15,9 @@ body {
 
 #info {
     width: 200px;
-    height: 500px;
+    height: 550px;
     position: absolute;
-    left: 580px;
+    left: 630px;
     top: 50px;
     border: 2px dashed #fff;
     text-align: center;
