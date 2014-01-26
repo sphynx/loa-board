@@ -8,28 +8,20 @@ LOABoard = () ->
   # INTERNAL STATE
   raphael = null
   model = null
-  s0 = LOA.startPosition(ROWS, COLS)
+
+  board = LOA.startPosition(ROWS, COLS)
+
+  # Global SVG elements
+  selectedChecker = null
+  moveCells = []
 
   # KnockIn.js model
   class LOABoardModel
-    constructor: (position = s0) ->
-
+    constructor: () ->
       # Old stuff, most likely it will be rewritten somehow.
       @black = ko.observableArray([])
       @white = ko.observableArray([])
       @whiteMove = ko.observable(true)
-
-      # 2D-array representing current board, not sure if it will be
-      # monitored properly when I change something in it
-      @board = ko.observable(position)
-
-      # Selected checker.
-      @selected = null
-
-      # Possible moves by currently selected checker, should be
-      # highlighted.
-      @possibleMoves = []
-
       @currentMove = ko.computed =>
         if @whiteMove() then "white" else "red"
 
@@ -47,7 +39,7 @@ LOABoard = () ->
 
     raphael.path(path).attr("stroke-width", 1)
 
-  drawPieces = (pos) ->
+  drawPosition = (pos) ->
     for i in [0 .. COLS-1]
       for j in [0 .. ROWS-1]
         switch pos[i][j]
@@ -56,7 +48,27 @@ LOABoard = () ->
           when LOA.WHITE
             model.white.push(mkChecker(i, j, "white"))
 
-  # Conversion function. It's probably better to do it using SVG transform
+  drawPossibleMoves = (moves, pos) ->
+    old.remove() for old in moveCells
+    for move in moves
+      [i,j] = move
+      moveCells.push(highlightSquare(i, j))
+
+  highlightSquare = (x0, y0) ->
+    [x,y] = indexToCoord(x0, y0)
+    delta = 2
+    back = raphael.rect(
+      x - CELL_SIZE/2 + 1
+      y - CELL_SIZE/2 + 1
+      CELL_SIZE-delta
+      CELL_SIZE-delta
+      )
+    back.toBack()
+    back.attr
+      fill: "blue"
+    back
+
+  # Conversion functions. It's probably better to do it using SVG transform
   # but it looks more complicated now
   indexToCoord = (i0, j0) ->
     [ CELL_SIZE * (i0 + 1.5)
@@ -80,14 +92,12 @@ LOABoard = () ->
     checker
 
   selectChecker = (checker) ->
-    model.selected.attr(fill : model.selected.origColor) if model.selected?
+    selectedChecker.attr(fill : selectedChecker.origColor) if selectedChecker?
     checker.attr("fill", "yellow")
     [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
-    model.selected = checker
-
-    # just log it for now
-    console.log(x0, y0)
-    console.log(LOA.possibleMoves(x0, y0, s0))
+    selectedChecker = checker
+    moves = LOA.possibleMoves(x0, y0, board)
+    drawPossibleMoves(moves, board)
 
   # PUBLIC FUNCTIONS
 
@@ -97,7 +107,7 @@ LOABoard = () ->
     model = new LOABoardModel()
     ko.applyBindings(model)
     drawBoard()
-    drawPieces(model.board())
+    drawPosition(board)
 
 # Initialization from JQuery
 $ -> LOABoard().init()
