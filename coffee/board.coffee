@@ -18,14 +18,28 @@ LOABoard = () ->
   # KnockIn.js model
   class LOABoardModel
     constructor: () ->
-      # Old stuff, most likely it will be rewritten somehow.
-      @black = ko.observableArray([])
-      @white = ko.observableArray([])
-      @whiteMove = ko.observable(true)
+      @white = ko.observable(0)
+      @black = ko.observable(0)
+      @whiteMove = ko.observable(false)
       @currentMove = ko.computed =>
         if @whiteMove() then "white" else "red"
 
+      @changeMove = () -> @whiteMove(not @whiteMove())
+
   # PRIVATE FUNCTIONS
+
+  # conversion functions. It's probably better to do it using SVG transform
+  # but it looks more complicated now
+  indexToCoord = (i0, j0) ->
+    [ CELL_SIZE * (i0 + 1.5)
+    , CELL_SIZE * (ROWS - j0 + 0.5)
+    ]
+
+  coordToIndex = (x, y) ->
+    [ x / CELL_SIZE - 1.5
+    , ROWS + 0.5 - y / CELL_SIZE
+    ]
+
 
   # ROWS x COLS grid with path lines
   drawBoard = ->
@@ -40,9 +54,11 @@ LOABoard = () ->
       for j in [0 .. ROWS-1]
         switch pos[i][j]
           when LOA.BLACK
-            model.black.push(drawChecker(i, j, "red"))
+            drawChecker(i, j, "red")
+            model.black(model.black() + 1)
           when LOA.WHITE
-            model.white.push(drawChecker(i, j, "white"))
+            drawChecker(i, j, "white")
+            model.white(model.white() + 1)
 
   offSelection = ->
     old.remove() for old in moveCells
@@ -69,7 +85,9 @@ LOABoard = () ->
       cursor: "crosshair"
 
     back.node.onclick = () ->
-      isCapture = board[i0][j0] isnt LOA.EMPTY
+      whiteCaptured = board[i0][j0] is LOA.WHITE
+      blackCaptured = board[i0][j0] is LOA.BLACK
+      isCapture = whiteCaptured or blackCaptured
 
       # update board array
       [from_x0, from_y0] = coordToIndex(from.attr("cx"), from.attr("cy"))
@@ -78,23 +96,18 @@ LOABoard = () ->
 
       # update visual representation
       offSelection()
-      if isCapture then raphael.getElementsByPoint(x, y).remove()
+      if isCapture
+        raphael.getElementsByPoint(x, y).remove()
+        if blackCaptured
+          model.black(model.black() - 1)
+        else
+          model.white(model.white() - 1)
       from.animate({ cx: x, cy: y }, 100)
       from.animate({"r": 20}, 1000, "elastic")
 
+      model.changeMove()
+
     back
-
-  # conversion functions. It's probably better to do it using SVG transform
-  # but it looks more complicated now
-  indexToCoord = (i0, j0) ->
-    [ CELL_SIZE * (i0 + 1.5)
-    , CELL_SIZE * (ROWS - j0 + 0.5)
-    ]
-
-  coordToIndex = (x, y) ->
-    [ x / CELL_SIZE - 1.5
-    , ROWS + 0.5 - y / CELL_SIZE
-    ]
 
   drawChecker = (i0, j0, color) ->
     [x, y] = indexToCoord(i0, j0)
@@ -108,7 +121,9 @@ LOABoard = () ->
     checker
 
   selectChecker = (checker) ->
+    if checker.origColor isnt model.currentMove() then return
     checker.animate({"r": 23}, 1000, "elastic")
+    selectedChecker.animate({"r": 20}, 1000, "elastic") if selectedChecker?
     selectedChecker = checker
     [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
     moves = LOA.possibleMoves(x0, y0, board)
