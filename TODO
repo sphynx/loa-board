@@ -1,6 +1,6 @@
-* switch current move
-* allow only current player to move
-* fix number of remaining checkers in the interface
++ switch current move
++ allow only current player to move
++ fix number of remaining checkers in the interface
 * structure move visualization better, refactor it
 * load HTML page from LG
 * parse the board from HTML
