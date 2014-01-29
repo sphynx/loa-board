@@ -1,3 +1,5 @@
+* display coordinates
+* display moves panel or at least "back" button which retracts the last move
 + switch current move
 + allow only current player to move
 + fix number of remaining checkers in the interface
