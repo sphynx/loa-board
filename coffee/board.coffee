@@ -174,7 +174,7 @@ LOABoard = () ->
     drawPosition(board)
 
     # some random moves to make it more interesting
-    move = (str) -> parseMove(makeMove(str))
+    move = (str) -> makeMove(parseMove(str))
     move("b1-b3")
     move("a4-c4")
     move("g1-i3")
