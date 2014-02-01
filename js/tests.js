@@ -72,8 +72,13 @@ function ne(board, x0, y0, expected) {
 }
 
 function moves(board, x1, y1, expected) {
-    deepEqual(LOA.possibleMoves(x1, y1, board).sort(), expected.sort(),
-              "Moves in start position for x1={0} and y1={1}".format(x1, y1));
+    function sortf(move) {
+        return [move.to.i, move.to.j]
+    }
+    deepEqual(
+        _.sortBy(LOA.possibleMoves(x1, y1, board), sortf),
+        _.sortBy(expected, sortf),
+         "Moves in start position for x1={0} and y1={1}".format(x1, y1));
 }
 
 // TESTS
@@ -132,9 +137,13 @@ test("Possible moves", function() {
     moves(s0, 6, 3, []);
 
     // normal moves
-    moves(s0, 0, 1, [[0,7], [2,1], [2,3]]);
-    moves(s0, 1, 0, [[1,2], [3,2], [7,0]]);
-    moves(s0, 5, 0, [[3,2], [5,2], [7,2]]);
-    moves(s0, 0, 6, [[0,0], [2,4], [2,6]]);
-    moves(s0, 7, 3, [[5,1], [5,3], [5,5]]);
+    moves(s0, 0, 1, [m(0,1,0,7), m(0,1,2,1), m(0,1,2,3)]);
+    moves(s0, 1, 0, [m(1,0,1,2), m(1,0,3,2), m(1,0,7,0)]);
+    moves(s0, 5, 0, [m(5,0,3,2), m(5,0,5,2), m(5,0,7,2)]);
+    moves(s0, 0, 6, [m(0,6,0,0), m(0,6,2,4), m(0,6,2,6)]);
+    moves(s0, 7, 3, [m(7,3,5,1), m(7,3,5,3), m(7,3,5,5)]);
 });
+
+function m(fromx, fromy, tox, toy) {
+    return { from : {i: fromx, j: fromy}, to: {i: tox, j: toy} }
+};

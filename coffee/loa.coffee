@@ -89,20 +89,19 @@ checkMove = (x0, y0, dx, dy, action, color, board) ->
     i += dx
     j += dy
     break unless 0 <= i < cols and 0 <= j < rows and as > 1
-    if board[i][j] is oppo then return null
+    if board[i][j] is oppo then return []
     as--
 
-  # Check last cell, it can be either empty or opponent's one
-  if 0 <= i < cols and 0 <= j < rows
-  then (if board[i][j] is EMPTY or board[i][j] is oppo then [i,j] else null)
-  else null
+  # Check the last cell, it should not have our own checker
+  if 0 <= i < cols and 0 <= j < rows and board[i][j] isnt color
+    [{ from: {i: x0, j: y0}, to: {i: i, j: j} }]
+  else
+    [] # no moves
 
 possibleMoves = (x0, y0, board) ->
   checker = board[x0][y0]
 
   if checker is EMPTY then return []
-
-  moves = []
 
   vertical = verticalAction(x0, y0, board)
   horizontal = horizontalAction(x0, y0, board)
@@ -112,31 +111,16 @@ possibleMoves = (x0, y0, board) ->
   check = (dx, dy, as) ->
     checkMove(x0, y0, dx, dy, as, checker, board)
 
-  n = check(0, 1, vertical)
-  moves.push(n) if n?
-
-  s = check(0, -1, vertical)
-  moves.push(s) if s?
-
-  w = check(-1, 0, horizontal)
-  moves.push(w) if w?
-
-  e = check(1, 0, horizontal)
-  moves.push(e) if e?
-
-  ne = check(1, 1, neDiagonal)
-  moves.push(ne) if ne?
-
-  sw = check(-1, -1, neDiagonal)
-  moves.push(sw) if sw?
-
-  nw = check(-1, 1, nwDiagonal)
-  moves.push(nw) if nw?
-
-  se = check(1, -1, nwDiagonal)
-  moves.push(se) if se?
-
-  moves
+  moves = []
+  moves.push(check( 0,  1, vertical))
+  moves.push(check( 0, -1, vertical))
+  moves.push(check(-1,  0, horizontal))
+  moves.push(check( 1,  0, horizontal))
+  moves.push(check( 1,  1, neDiagonal))
+  moves.push(check(-1, -1, neDiagonal))
+  moves.push(check(-1,  1, nwDiagonal))
+  moves.push(check( 1, -1, nwDiagonal))
+  _.flatten(moves)
 
 otherColor = (color) -> switch color
   when WHITE then BLACK

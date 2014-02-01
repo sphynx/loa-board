@@ -1,15 +1,27 @@
 # Constants
+
+# Visual
 ROWS = 9
 COLS = 9
 CELL_SIZE = 50
 RADIUS = CELL_SIZE/2 - 5
+BLACK_CHECKER_COLOR = "red"
+WHITE_CHECKER_COLOR = "white"
+CHECKER_STROKE_WIDTH = 3
+CHECKER_CURSOR = "crosshair"
+
+# Game-related
+BLACK_PLAYER = "black"
+WHITE_PLAYER = "white"
 
 LOABoard = () ->
   # INTERNAL STATE
   raphael = null
   model = null
 
+  # board: internal array and mapping between indices and SVG checker elements
   board = LOA.startPosition(ROWS, COLS)
+  checkers = []
 
   # Global SVG elements
   selectedChecker = null
@@ -22,7 +34,7 @@ LOABoard = () ->
       @black = ko.observable(0)
       @whiteMove = ko.observable(false)
       @currentMove = ko.computed =>
-        if @whiteMove() then "white" else "red"
+        if @whiteMove() then WHITE_PLAYER else BLACK_PLAYER
 
       @changeMove = () -> @whiteMove(not @whiteMove())
 
@@ -51,83 +63,105 @@ LOABoard = () ->
 
   drawPosition = (pos) ->
     for i in [0 .. COLS-1]
+      checkers[i] = []
       for j in [0 .. ROWS-1]
         switch pos[i][j]
           when LOA.BLACK
-            drawChecker(i, j, "red")
+            checkers[i][j] = drawChecker(i, j, BLACK_PLAYER, BLACK_CHECKER_COLOR)
             model.black(model.black() + 1)
           when LOA.WHITE
-            drawChecker(i, j, "white")
+            checkers[i][j] = drawChecker(i, j, WHITE_PLAYER, WHITE_CHECKER_COLOR)
             model.white(model.white() + 1)
 
-  offSelection = ->
-    old.remove() for old in moveCells
+  drawChecker = (i0, j0, player, color) ->
+    [x, y] = indexToCoord(i0, j0)
+    checker = raphael.circle(x, y, RADIUS)
+    checker.player = player
+    checker.attr
+      "fill": color
+      "stroke-width": CHECKER_STROKE_WIDTH
+      "cursor": CHECKER_CURSOR
+    checker.node.onclick = () ->
+      if checker.player isnt model.currentMove() then return
+      checker.animate({"r": RADIUS + 3}, 1000, "elastic")
+      selectedChecker.animate({"r": RADIUS}, 1000, "elastic") if selectedChecker?
+      selectedChecker = checker
+      [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
+      drawPossibleMoves(LOA.possibleMoves(x0, y0, board))
+    checker
 
-  drawPossibleMoves = (moves, pos, from) ->
-    offSelection()
-    for move in moves
-      [i,j] = move
-      moveCells.push(highlightSquare(i, j, from))
+  drawPossibleMoves = (moves) ->
+    resetPossibleMoves()
+    moveCells.push(drawPossibleMove(move)) for move in moves
 
-  highlightSquare = (i0, j0, from) ->
-    [x,y] = indexToCoord(i0, j0)
+  drawPossibleMove = (move) ->
+    [x,y] = indexToCoord(move.to.i, move.to.j)
     delta = 2
     back = raphael.rect(
       x - CELL_SIZE/2 + 1
       y - CELL_SIZE/2 + 1
-      CELL_SIZE-delta
-      CELL_SIZE-delta
+      CELL_SIZE - delta
+      CELL_SIZE - delta
       )
 
     back.attr
-      fill: "white"
+      "fill": "white"
       "fill-opacity": 0.1
-      cursor: "crosshair"
+      "cursor": "crosshair"
 
-    back.node.onclick = () ->
-      whiteCaptured = board[i0][j0] is LOA.WHITE
-      blackCaptured = board[i0][j0] is LOA.BLACK
-      isCapture = whiteCaptured or blackCaptured
-
-      # update board array
-      [from_x0, from_y0] = coordToIndex(from.attr("cx"), from.attr("cy"))
-      board[i0][j0] = board[from_x0][from_y0]
-      board[from_x0][from_y0] = LOA.EMPTY
-
-      # update visual representation
-      offSelection()
-      if isCapture
-        raphael.getElementsByPoint(x, y).remove()
-        if blackCaptured
-          model.black(model.black() - 1)
-        else
-          model.white(model.white() - 1)
-      from.animate({ cx: x, cy: y }, 100)
-      from.animate({"r": 20}, 1000, "elastic")
-
-      model.changeMove()
-
+    back.node.onclick = () -> makeMove(move)
     back
 
-  drawChecker = (i0, j0, color) ->
-    [x, y] = indexToCoord(i0, j0)
-    checker = raphael.circle(x, y, RADIUS)
-    checker.attr
-      "stroke-width": 3
-      fill: color
-      cursor: "crosshair"
-    checker.origColor = color
-    checker.node.onclick = -> selectChecker(checker)
-    checker
+  resetPossibleMoves = ->
+    old.remove() for old in moveCells
 
-  selectChecker = (checker) ->
-    if checker.origColor isnt model.currentMove() then return
-    checker.animate({"r": 23}, 1000, "elastic")
-    selectedChecker.animate({"r": 20}, 1000, "elastic") if selectedChecker?
-    selectedChecker = checker
-    [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
-    moves = LOA.possibleMoves(x0, y0, board)
-    drawPossibleMoves(moves, board, checker)
+  makeMove = (move) ->
+    whiteCaptured = board[move.to.i][move.to.j] is LOA.WHITE
+    blackCaptured = board[move.to.i][move.to.j] is LOA.BLACK
+    isCapture = whiteCaptured or blackCaptured
+
+    # update model and board array
+    board[move.to.i][move.to.j] = board[move.from.i][move.from.j]
+    board[move.from.i][move.from.j] = LOA.EMPTY
+
+    if blackCaptured
+        model.black(model.black() - 1)
+    else if whiteCaptured
+        model.white(model.white() - 1)
+
+    model.changeMove()
+
+    # update visual representation
+    resetPossibleMoves()
+
+    if isCapture then checkers[move.to.i][move.to.j].remove()
+
+    movingChecker = checkers[move.from.i][move.from.j]
+    [toX, toY] = indexToCoord(move.to.i, move.to.j)
+    movingChecker.animate({ cx: toX, cy: toY }, 100)
+    movingChecker.animate({"r": RADIUS}, 1000, "elastic")
+
+    checkers[move.to.i][move.to.j] = movingChecker
+    checkers[move.from.i][move.from.j] = null
+
+  parseMove = (moveStr) ->
+    str = moveStr.toLowerCase()
+    re = /([a-i][1-9])\s*[-x]\s*([a-i][1-9])/
+    ord = (c) -> c.charCodeAt(0)
+    ONE_ORD = ord "1"
+    A_ORD = ord "a"
+    parts = re.exec(str)
+    if parts?
+      fromStr = parts[1]
+      toStr = parts[2]
+      from :
+        i: fromStr.charCodeAt(0) - A_ORD
+        j: fromStr.charCodeAt(1) - ONE_ORD
+      to :
+        i: toStr.charCodeAt(0) - A_ORD
+        j: toStr.charCodeAt(1) - ONE_ORD
+    else
+      null
 
   # PUBLIC FUNCTIONS
 
@@ -139,5 +173,11 @@ LOABoard = () ->
     drawBoard()
     drawPosition(board)
 
-# Initialization from JQuery
+    # some random moves to make it more interesting
+    move = (str) -> parseMove(makeMove(str))
+    move("b1-b3")
+    move("a4-c4")
+    move("g1-i3")
+
+# initialization from JQuery
 $ -> LOABoard().init()
