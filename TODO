@@ -1,13 +1,8 @@
 * display coordinates
-* display moves panel or at least "back" button which retracts the last move
-+ switch current move
-+ allow only current player to move
-+ fix number of remaining checkers in the interface
-* structure move visualization better, refactor it
-* load HTML page from LG
-* parse the board from HTML
 * make board checkered, improve colors, animations, etc.
-* handle 9x9 black hole variant
-* handle other variants
-* display moves made and allow revert to any moves before
-* load past moves from LG
+* handle LOA variants (at least 9x9 black hole)
+* display moves made and allow reverting to any moves before
+* support BrainKing (figure out whether we have
+* add server side to load moves and put them in JS as constants
+* provide easy urls to analyze games (i.e. /lg/2313213, /bk/23123123)
+* add victory conditions check and some animation

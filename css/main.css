@@ -5,8 +5,8 @@ body {
 }
 
 #holder {
-    width: 550px;
-    height: 550px;
+    width: 500px;
+    height: 500px;
     position: absolute;
     left: 50px;
     top: 50px;
@@ -15,7 +15,7 @@ body {
 
 #info {
     width: 200px;
-    height: 550px;
+    height: 500px;
     position: absolute;
     left: 630px;
     top: 50px;
@@ -44,7 +44,7 @@ body {
 
 #current-block {
     position: absolute;
-    bottom: 1em;
+    top: 1em;
     left: 1em;
 }
 
