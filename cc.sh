@@ -1,1 +1,1 @@
-coffee -m -o gen/ -cw coffee/
+coffee -m -o js/ -cw coffee/
