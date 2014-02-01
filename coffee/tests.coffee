@@ -13,12 +13,6 @@ function neDiagonalAction(x0, y0, board)
 
 # Helpers
 
-String::format = ->
-  formatted = this
-  for arg, i in arguments
-    formatted = formatted.replace("{" + i + "}", arg)
-  formatted
-
 m = (fromx, fromy, tox, toy) ->
   from: {i: fromx, j: fromy}
   to: {i: tox, j: toy}
