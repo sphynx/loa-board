@@ -21,10 +21,11 @@ field = lexeme(seq([file, rank])
 
 moveNumber = lexeme(regex(/[0-9]+\./))
 
-separator = regex /\s*[-x]\s*/
+isCapture = regex(/\s*-\s*/).result(false)
+            .or(regex(/\s*x\s*/).result(true))
 
-okMove = lexeme(seq([field, separator, field])
-             .map((res) -> from: res[0], to: res[2]))
+okMove = lexeme(seq([field, isCapture, field])
+             .map((res) -> from: res[0], to: res[2], isCapture: res[1]))
 
 resignMove = lexeme (str("resign"))
 move = okMove.or(resignMove)

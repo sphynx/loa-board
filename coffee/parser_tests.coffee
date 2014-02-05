@@ -69,6 +69,11 @@ valid = (pgn, expMoves, gameNo) ->
 invalid = (pgn, ident) ->
   throws((() -> PGN.parseGames(pgn)), ident)
 
+numberOfCaptures = (pgn, exp) ->
+  moves = PGN.parseGame(pgn)
+  cats = _(moves).countBy((x) -> if x.isCapture then 'capture' else 'normal')
+  equal(cats.capture, exp, "Number of captures in GAME0")
+
 test("PGN parsing", ->
   valid("1. f1-f3 *", [1], "One move game")
   valid("1.f1-f3*", [1], "One move game without spaces")
@@ -83,6 +88,7 @@ test("PGN parsing", ->
   invalid("1. a0-c9", "Wrong coordinates")
   invalid("1. f1-f3", "No game result")
   invalid("", "Empty game")
-
+  numberOfCaptures(GAME0, 7)
 )
 
+# game 0 - 7 captures
