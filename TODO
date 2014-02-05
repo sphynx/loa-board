@@ -4,3 +4,4 @@
 * display moves made and allow reverting to any moves before
 * support BrainKing
 * add victory conditions check and some animation
+* add minified versions of libs
