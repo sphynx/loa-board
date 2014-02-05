@@ -118,7 +118,7 @@ LOABoard = () ->
   doMove = (move) ->
     whiteCaptured = board[move.to.i][move.to.j] is LOA.WHITE
     blackCaptured = board[move.to.i][move.to.j] is LOA.BLACK
-    isCapture = whiteCaptured or blackCaptured
+    isCapture = move.isCapture
 
     # update model and board array
     board[move.to.i][move.to.j] = board[move.from.i][move.from.j]

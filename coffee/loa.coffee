@@ -94,7 +94,7 @@ checkMove = (x0, y0, dx, dy, action, color, board) ->
 
   # Check the last cell, it should not have our own checker
   if 0 <= i < cols and 0 <= j < rows and board[i][j] isnt color
-    [{ from: {i: x0, j: y0}, to: {i: i, j: j} }]
+    [ from: {i: x0, j: y0}, to: {i: i, j: j}, isCapture: board[i][j] isnt EMPTY ]
   else
     [] # no moves
 

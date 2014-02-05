@@ -13,9 +13,10 @@ function neDiagonalAction(x0, y0, board)
 
 # Helpers
 
-m = (fromx, fromy, tox, toy) ->
+m = (fromx, fromy, tox, toy, capture) ->
   from: {i: fromx, j: fromy}
   to: {i: tox, j: toy}
+  isCapture: capture
 
 emptyPosStr =
   [ "........"
@@ -26,19 +27,6 @@ emptyPosStr =
   , "........"
   , "........"
   ];
-
-termPosStr =
-  [ "........"
-  , "ww......"
-  , ".....w.."
-  , ".w.b...."
-  , "..wb.b.."
-  , ".bb.b..."
-  , ".....b.."
-  , "....w..."
-  ];
-
-termPos = LOA.parsePosition(termPosStr)
 
 s0Expected =
   [[" ", "w", "w", "w", "w", "w", "w", " "]
@@ -128,10 +116,10 @@ test("Possible moves", ->
     moves(s0, 6, 3, [])
 
     # normal moves
-    moves(s0, 0, 1, [m(0,1,0,7), m(0,1,2,1), m(0,1,2,3)])
-    moves(s0, 1, 0, [m(1,0,1,2), m(1,0,3,2), m(1,0,7,0)])
-    moves(s0, 5, 0, [m(5,0,3,2), m(5,0,5,2), m(5,0,7,2)])
-    moves(s0, 0, 6, [m(0,6,0,0), m(0,6,2,4), m(0,6,2,6)])
-    moves(s0, 7, 3, [m(7,3,5,1), m(7,3,5,3), m(7,3,5,5)])
+    moves(s0, 0, 1, [m(0,1,0,7,false), m(0,1,2,1,false), m(0,1,2,3,false)])
+    moves(s0, 1, 0, [m(1,0,1,2,false), m(1,0,3,2,false), m(1,0,7,0,false)])
+    moves(s0, 5, 0, [m(5,0,3,2,false), m(5,0,5,2,false), m(5,0,7,2,true)])
+    moves(s0, 0, 6, [m(0,6,0,0,false), m(0,6,2,4,false), m(0,6,2,6,false)])
+    moves(s0, 7, 3, [m(7,3,5,1,false), m(7,3,5,3,false), m(7,3,5,5,false)])
 )
 
