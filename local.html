@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>LOA</title>
+
+    <link rel="stylesheet" href="public/css/main.css"/>
+
+    <script src="public/lib/jquery-1.10.2.js"></script>
+    <script src="public/lib/knockout-3.0.0.js"></script>
+    <script src="public/lib/raphael-2.1.2.js"></script>
+    <script src="public/lib/underscore-1.5.2.js"></script>
+    <script src="public/lib/parsimmon-dev.js"></script>
+
+    <script src="public/js/loa.js"></script>
+    <script src="public/js/board.js"></script>
+    <script src="public/js/pgn.js"></script>
+
+    <script>
+        GAME = '[Event "Tournament ut.loa.840.1.1"] [Site "www.littlegolem.net"] [White "VSapristi"] [Black "Ivan Veselov"] [Result "*"] 1. c8-c6 h5-f7 2. e8-e6 a2xe6 3. f8-d6 *';
+    </script>
+
+  </head>
+  <body>
+    <div id="holder">
+    </div>
+
+    <div id="info">
+
+      <span id="redScore" class="score" data-bind="text: black()"></span>
+      <span id="whiteScore" class="score" data-bind="text: white()"></span>
+
+      <div id="current-block">
+        Current move:
+        <span id="currentMove" data-bind="text: currentMove, style: {color: currentMove()}"></span>
+      </div>
+
+    </div>
+  </body>
+</html>
