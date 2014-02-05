@@ -144,25 +144,6 @@ LOABoard = () ->
     checkers[move.to.i][move.to.j] = movingChecker
     checkers[move.from.i][move.from.j] = null
 
-  parseMove = (moveStr) ->
-    str = moveStr.toLowerCase()
-    re = /([a-i][1-9])\s*[-x]\s*([a-i][1-9])/
-    ord = (c) -> c.charCodeAt(0)
-    ONE_ORD = ord "1"
-    A_ORD = ord "a"
-    parts = re.exec(str)
-    if parts?
-      fromStr = parts[1]
-      toStr = parts[2]
-      from :
-        i: fromStr.charCodeAt(0) - A_ORD
-        j: fromStr.charCodeAt(1) - ONE_ORD
-      to :
-        i: toStr.charCodeAt(0) - A_ORD
-        j: toStr.charCodeAt(1) - ONE_ORD
-    else
-      null
-
   # PUBLIC FUNCTIONS
 
   # Entry point
