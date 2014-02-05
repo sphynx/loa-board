@@ -10,7 +10,19 @@ task :serve do
   sh "shotgun app.rb"
 end
 
+desc "Run tests"
+task :test => [:coffee] do
+  sh "open tests.html"
+end
+
 desc "Deploys essential files to remote server"
 task :deploy do
   sh "rsync --checksum --progress -ave ssh public views app.rb config.ru sphynx@horna.org.ua:/srv/horna.org.ua/loa-board"
 end
+
+desc "Open local.html in browser"
+task :look => [:coffee] do
+  sh "open local.html"
+end
+
+
