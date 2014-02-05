@@ -9,7 +9,7 @@ task :serve do
 end
 
 task :deploy do
-  sh "rsync --checksum --progress -ave ssh public/* views/* app.rb config.ru sphynx@horna.org.ua:/srv/horna.org.ua/loa-board"
+  sh "rsync --checksum --progress -ave ssh public views app.rb config.ru sphynx@horna.org.ua:/srv/horna.org.ua/loa-board"
 end
 
 
