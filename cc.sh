@@ -1,1 +1,1 @@
-coffee -m -o js/ -cw coffee/
+coffee -m -o public/js/ -cw coffee/

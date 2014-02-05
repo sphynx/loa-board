@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>LOA</title>
+
+    <link rel="stylesheet" href="/css/main.css"/>
+
+    <script src="/lib/jquery-1.10.2.js"></script>
+    <script src="/lib/knockout-3.0.0.js"></script>
+    <script src="/lib/raphael-2.1.2.js"></script>
+    <script src="/lib/underscore-1.5.2.js"></script>
+    <script src="/lib/parsimmon-dev.js"></script>
+
+    <script src="/js/loa.js"></script>
+    <script src="/js/board.js"></script>
+    <script src="/js/pgn.js"></script>
+
+    <script>
+        GAME = '<%= $pgn %>';
+    </script>
+
+  </head>
+  <body>
+<%= @foo %>
+    <div id="holder">
+    </div>
+
+    <div id="info">
+
+      <span id="redScore" class="score" data-bind="text: black()"></span>
+      <span id="whiteScore" class="score" data-bind="text: white()"></span>
+
+      <div id="current-block">
+        Current move:
+        <span id="currentMove" data-bind="text: currentMove, style: {color: currentMove()}"></span>
+      </div>
+
+    </div>
+  </body>
+</html>

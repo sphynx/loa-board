@@ -1,4 +1,4 @@
 .project
 *.map
 \#*#
-js/*
+public/js/*
