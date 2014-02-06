@@ -5,6 +5,11 @@ task :coffee do
   sh "coffee -m -o public/js -c coffee/"
 end
 
+desc "Compiles CoffeeScript on the fly"
+task :coffee_fly do
+  sh "coffee -m -o public/js -cw coffee/"
+end
+
 desc "Runs the server locally"
 task :serve do
   sh "shotgun app.rb"

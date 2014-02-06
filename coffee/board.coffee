@@ -4,10 +4,10 @@
 ROWS = 8
 COLS = 8
 CELL_SIZE = 50
-RADIUS = CELL_SIZE/2 - 5
+RADIUS = CELL_SIZE/2 - 6
 BLACK_CHECKER_COLOR = "red"
 WHITE_CHECKER_COLOR = "white"
-CHECKER_STROKE_WIDTH = 3
+CHECKER_STROKE_WIDTH = 2
 CHECKER_CURSOR = "crosshair"
 
 # Game-related
@@ -52,14 +52,23 @@ LOABoard = () ->
     , ROWS + 0.5 - y / CELL_SIZE
     ]
 
-
   # ROWS x COLS grid with path lines
   drawBoard = ->
     for i in [1 .. COLS+1]
-      raphael.path("M" + CELL_SIZE * i + " " + CELL_SIZE + "v" + ROWS * CELL_SIZE)
+      p = raphael.path("M" + CELL_SIZE * i + " " + CELL_SIZE + "v" + ROWS * CELL_SIZE)
+      p.attr
+        stroke: "rgb(168,124,53)"
 
     for i in [1 .. ROWS+1]
-      raphael.path("M" + CELL_SIZE + " "  + CELL_SIZE * i + "h" + COLS * CELL_SIZE)
+      p = raphael.path("M" + CELL_SIZE + " "  + CELL_SIZE * i + "h" + COLS * CELL_SIZE)
+      p.attr
+        stroke: "rgb(168,124,53)"
+
+    for i in [1 .. COLS]
+      for j in [1 .. ROWS]
+        field = raphael.rect(CELL_SIZE * i + 1, CELL_SIZE * j + 1, CELL_SIZE - 2, CELL_SIZE - 2, 0)
+        field.attr
+          fill: if (i+j) % 2 is 0 then "rgb(255, 215, 164)" else "rgb(211, 145, 61)"
 
   drawPosition = (pos) ->
     for i in [0 .. COLS-1]
@@ -83,7 +92,7 @@ LOABoard = () ->
       "cursor": CHECKER_CURSOR
     checker.node.onclick = () ->
       if checker.player isnt model.currentMove() then return
-      checker.animate({"r": RADIUS + 3}, 1000, "elastic")
+      checker.animate({"r": RADIUS + 2}, 1000, "elastic")
       selectedChecker.animate({"r": RADIUS}, 1000, "elastic") if selectedChecker?
       selectedChecker = checker
       [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
@@ -105,8 +114,8 @@ LOABoard = () ->
       )
 
     back.attr
-      "fill": "white"
-      "fill-opacity": 0.1
+      "fill": "green"
+      "fill-opacity": 0.3
       "cursor": "crosshair"
 
     back.node.onclick = () -> doMove(move)
