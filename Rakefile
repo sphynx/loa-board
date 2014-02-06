@@ -25,4 +25,7 @@ task :look => [:coffee] do
   sh "open local.html"
 end
 
-
+desc "Opens an LG game to analyze"
+task :a, [:game_id] do |t, args|
+  sh "open http://horna.org.ua/lg/#{args.game_id}"
+end
