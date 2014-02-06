@@ -52,23 +52,13 @@ LOABoard = () ->
     , ROWS + 0.5 - y / CELL_SIZE
     ]
 
-  # ROWS x COLS grid with path lines
   drawBoard = ->
-    for i in [1 .. COLS+1]
-      p = raphael.path("M" + CELL_SIZE * i + " " + CELL_SIZE + "v" + ROWS * CELL_SIZE)
-      p.attr
-        stroke: "rgb(168,124,53)"
-
-    for i in [1 .. ROWS+1]
-      p = raphael.path("M" + CELL_SIZE + " "  + CELL_SIZE * i + "h" + COLS * CELL_SIZE)
-      p.attr
-        stroke: "rgb(168,124,53)"
-
     for i in [1 .. COLS]
       for j in [1 .. ROWS]
-        field = raphael.rect(CELL_SIZE * i + 1, CELL_SIZE * j + 1, CELL_SIZE - 2, CELL_SIZE - 2, 0)
+        field = raphael.rect(CELL_SIZE * i, CELL_SIZE * j, CELL_SIZE, CELL_SIZE, 0)
         field.attr
-          fill: if (i+j) % 2 is 0 then "rgb(255, 215, 164)" else "rgb(211, 145, 61)"
+          "fill": if (i+j) % 2 is 0 then "rgb(255, 215, 164)" else "rgb(211, 145, 61)"
+          "stroke-width": 1
 
   drawPosition = (pos) ->
     for i in [0 .. COLS-1]
