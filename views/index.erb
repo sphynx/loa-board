@@ -1,41 +1,109 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>LOA Board</title>
 
-    <link rel="stylesheet" href="/css/main.css"/>
-
-    <script src="/lib/jquery-1.10.2.js"></script>
-    <script src="/lib/knockout-3.0.0.js"></script>
-    <script src="/lib/raphael-2.1.2.js"></script>
-    <script src="/lib/underscore-1.5.2.js"></script>
-    <script src="/lib/parsimmon-dev.js"></script>
-
-    <script src="/js/loa.js"></script>
-    <script src="/js/board.js"></script>
-    <script src="/js/pgn.js"></script>
+    <link href="public/css/bootstrap-3.1.0.min.css" rel="stylesheet"/>
 
     <script>
         GAME = '<%= $pgn %>';
     </script>
 
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
+
   <body>
-    <div id="holder">
-    </div>
+    <div class="container">
 
-    <div id="info">
+      <div class="page-header">
+        <h1>Lines of Action virtual board</h1>
+        <p class="lead">to analyze your LittleGolem games</p>
+      </div>
 
-      <span id="redScore" class="score" data-bind="text: black()"></span>
-      <span id="whiteScore" class="score" data-bind="text: white()"></span>
+      <div class="row">
+        <div class="col-md-6">
+          <div id="holder">
+          </div>
+        </div>
 
-      <div id="current-block">
-        Current move:
-        <span id="currentMove" data-bind="text: currentMove, style: {color: currentMove()}"></span>
+        <div class="col-md-6">
+
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Game details</h3>
+            </div>
+
+            <div class="panel-body">
+              <dl class="dl-horizontal">
+                <dt>To move</dt>
+                <dd data-bind="text:currentMove"></dd>
+
+                <dt>Event</dt>
+                <dd>Tournament ut.loa.840.1.1</dd>
+
+                <dt>White player</dt>
+                <dd>Ivan Veselov, Ukraine, 1738</dd>
+
+                <dt>Black player</dt>
+                <dd>VSapristi, Canada, 1851</dd>
+
+                <dt>Little Golem link</dt>
+                <dd><a href="http://www.littlegolem.net/jsp/game/game.jsp?gid=1610844">1610844</a></dd>
+
+                <dt>White pices left</dt>
+                <dd data-bind="text:white()"></dd>
+
+                <dt>Black pieces left</dt>
+                <dd data-bind="text: black()"></dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Moves</h3>
+            </div>
+
+            <div class="panel-body">
+              <button type="button" class="btn btn-link btn-xs">1. f1-f2</button>
+              <button type="button" class="btn btn-link btn-xs">2. f3xf4</button>
+              <button type="button" class="btn btn-link btn-xs">3. g5-d9</button>
+              <button type="button" class="btn btn-link btn-xs">4. a1-b8</button>
+              <button type="button" class="btn btn-link btn-xs">5. d2-c3</button>
+              <button type="button" class="btn btn-link btn-xs">6. h1-h7</button>
+              <button type="button" class="btn btn-link btn-xs">7. f1-f2</button>
+              <button type="button" class="btn btn-link btn-xs">8. f3xf4</button>
+              <button type="button" class="btn btn-link btn-xs">9. g5-d9</button>
+              <button type="button" class="btn btn-link btn-xs">10. a1-b8</button>
+              <button type="button" class="btn btn-link btn-xs">11. d2-c3</button>
+              <button type="button" class="btn btn-link btn-xs">12. h1-h7</button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>
+
+  <script src="public/lib/jquery-1.10.2.js"></script>
+  <script src="public/lib/bootstrap-3.1.0.min.js"></script>
+  <script src="public/lib/knockout-3.0.0.js"></script>
+  <script src="public/lib/raphael-2.1.2.js"></script>
+  <script src="public/lib/underscore-1.5.2.js"></script>
+  <script src="public/lib/parsimmon-dev.js"></script>
+
+  <script src="public/js/loa.js"></script>
+  <script src="public/js/board.js"></script>
+  <script src="public/js/pgn.js"></script>
+
   </body>
 </html>
