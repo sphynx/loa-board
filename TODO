@@ -1,7 +1,9 @@
 * display coordinates
-* make board checkered, improve colors, animations, etc.
-* handle LOA variants (at least 9x9 black hole)
+* handle LOA variants (esp. 9x9 black hole)
 * display moves made and allow reverting to any moves before
 * support BrainKing
 * add victory conditions check and some animation
-* add minified versions of libs
+* use minified versions of libs for deploy
+* pur player names in the page title
+* animate only the last move, not all of them (esp. during loading)
+* always highlight the last move
