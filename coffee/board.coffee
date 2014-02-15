@@ -40,13 +40,20 @@ LOABoard = () ->
       @lastMove = ko.observable(0)
       @variationStart = ko.observable(0)
 
-      @startVariation = (move) =>
+      @mainlineClick = (move) =>
         n = move.number
-        console.log(move)
         @lastMove(n)
         @variationStart(n)
         @variationMoves([])
         displayPositionAfterMoves(@actualMoves[0..n-1])
+
+      @variationClick = (move) =>
+        n = move.number
+        @lastMove(n)
+        take = n - @variationStart()
+        @variationMoves(@variationMoves[0..take-1])
+        displayPositionAfterMoves(@actualMoves().concat(@variationMoves()))
+
 
       @currentMove = ko.computed =>
         if @whiteMove() then WHITE_PLAYER else BLACK_PLAYER
@@ -103,12 +110,24 @@ LOABoard = () ->
       "cursor": CHECKER_CURSOR
     checker.node.onclick = () ->
       if checker.player isnt model.currentMove() then return
-      checker.animate({"r": RADIUS + 2}, 1000, "elastic")
-      selectedChecker.animate({"r": RADIUS}, 1000, "elastic") if selectedChecker?
+      animateSelect(checker)
       selectedChecker = checker
       [x0, y0] = coordToIndex(checker.attr("cx"), checker.attr("cy"))
       drawPossibleMoves(LOA.possibleMoves(x0, y0, board))
     checker
+
+  animateSelect = (checker) ->
+    checker.animate({ r: RADIUS + 2}, 1000, "elastic")
+    selectedChecker.animate({ r: RADIUS}, 1000, "elastic") if selectedChecker?
+
+  visualizeMove = (checker, x, y, mode) ->
+    if mode is "variation"
+      checker.animate({ cx: x, cy: y }, 100)
+      checker.animate({ r: RADIUS}, 1000, "elastic")
+    else
+      checker.attr
+        cx: x
+        cy: y
 
   drawPossibleMoves = (moves) ->
     resetPossibleMoves()
@@ -171,8 +190,7 @@ LOABoard = () ->
 
     movingChecker = checkers[move.from.i][move.from.j]
     [toX, toY] = indexToCoord(move.to.i, move.to.j)
-    movingChecker.animate({ cx: toX, cy: toY }, 100)
-    movingChecker.animate({ r: RADIUS}, 1000, "elastic")
+    visualizeMove(movingChecker, toX, toY, mode)
 
     checkers[move.to.i][move.to.j] = movingChecker
     checkers[move.from.i][move.from.j] = null

@@ -74,14 +74,14 @@
             </div>
 
             <div class="panel-body" data-bind="foreach: actualMoves">
-              <button type="button" class="btn btn-link btn-xs"
-                      data-bind="text: moveText, click: $root.startVariation">
+              <button type="button" class="btn btn-default btn-xs" style="margin-top: 5px"
+                      data-bind="text: moveText, click: $root.mainlineClick">
               </button>
             </div>
 
             <div class="panel-body" data-bind="foreach: variationMoves">
               <button type="button" class="btn btn-link btn-xs"
-                      data-bind="text: moveText">
+                      data-bind="text: moveText, click: $root.variationClick">
               </button>
             </div>
 
