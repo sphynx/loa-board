@@ -6,7 +6,17 @@ str = Parsimmon.string
 ows = Parsimmon.optWhitespace
 skip = Parsimmon.skip
 
+
+# Printers
+printPos = (pos) ->
+  alphabet[pos.i] + (pos.j + 1)
+
+printMove = (move) ->
+  sep = if move.isCapture then "x" else "-"
+  move.number + ". " + printPos(move.from) + sep + printPos(move.to)
+
 # Helpers
+alphabet = "abcdefghijklmnopqrstuvwxyz"
 ord = (c) -> c.charCodeAt(0)
 lexeme = (p) -> p.skip(ows)
 
@@ -74,4 +84,6 @@ global.PGN =
   parseMove: (str) -> move.parse(str)
   parseGame: (pgn) -> game.parse(pgn)
   parseGames: (pgn) -> games.parse(pgn)
+
+  printMove: printMove
 

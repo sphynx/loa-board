@@ -19,8 +19,9 @@ LOABoard = () ->
   raphael = null
   model = null
 
-  # board: internal array and mapping between indices and SVG checker elements
+  # board: internal array
   board = LOA.startPosition(ROWS, COLS)
+  # mapping between indices and SVG checker elements
   checkers = []
 
   # Global SVG elements
@@ -33,10 +34,30 @@ LOABoard = () ->
       @white = ko.observable(0)
       @black = ko.observable(0)
       @whiteMove = ko.observable(false)
+
+      @actualMoves = ko.observableArray()
+      @variationMoves = ko.observableArray()
+      @lastMove = ko.observable(0)
+      @variationStart = ko.observable(0)
+
+      @startVariation = (move) =>
+        n = move.number
+        console.log(move)
+        @lastMove(n)
+        @variationStart(n)
+        @variationMoves([])
+        displayPositionAfterMoves(@actualMoves[0..n-1])
+
       @currentMove = ko.computed =>
         if @whiteMove() then WHITE_PLAYER else BLACK_PLAYER
 
       @changeMove = () -> @whiteMove(not @whiteMove())
+
+      @reset = () =>
+        @white(0)
+        @black(0)
+        @whiteMove(false)
+
 
   # PRIVATE FUNCTIONS
 
@@ -108,13 +129,13 @@ LOABoard = () ->
       "fill-opacity": 0.3
       "cursor": "crosshair"
 
-    back.node.onclick = () -> doMove(move)
+    back.node.onclick = () -> doMove(move, "variation")
     back
 
   resetPossibleMoves = ->
     old.remove() for old in moveCells
 
-  doMove = (move) ->
+  doMove = (move, mode) ->
     whiteCaptured = board[move.to.i][move.to.j] is LOA.WHITE
     blackCaptured = board[move.to.i][move.to.j] is LOA.BLACK
     isCapture = move.isCapture
@@ -128,6 +149,19 @@ LOABoard = () ->
     else if whiteCaptured
         model.white(model.white() - 1)
 
+    switch mode
+      when "load"
+        model.lastMove(model.lastMove() + 1)
+        model.variationStart(model.variationStart() + 1)
+        move.number = model.lastMove()
+        move.moveText = PGN.printMove(move)
+        model.actualMoves.push(move)
+      when "variation"
+        model.lastMove(model.lastMove() + 1)
+        move.number = model.lastMove()
+        move.moveText = PGN.printMove(move)
+        model.variationMoves.push(move)
+
     model.changeMove()
 
     # update visual representation
@@ -138,22 +172,35 @@ LOABoard = () ->
     movingChecker = checkers[move.from.i][move.from.j]
     [toX, toY] = indexToCoord(move.to.i, move.to.j)
     movingChecker.animate({ cx: toX, cy: toY }, 100)
-    movingChecker.animate({"r": RADIUS}, 1000, "elastic")
+    movingChecker.animate({ r: RADIUS}, 1000, "elastic")
 
     checkers[move.to.i][move.to.j] = movingChecker
     checkers[move.from.i][move.from.j] = null
 
+  removeCheckers = () ->
+    for i in [0..COLS-1]
+      for j in [0..ROWS-1]
+        checkers[i][j].remove() if checkers[i][j]?
+
+  displayPositionAfterMoves = (moves) ->
+    board = LOA.startPosition(ROWS, COLS)
+    model.reset()
+    removeCheckers()
+    drawPosition(board)
+    doMove(m, "redraw") for m in moves
+
   # PUBLIC FUNCTIONS
 
   # Entry point
-  init : ->
+  init: ->
     raphael = Raphael("holder", 500, 500)
     model = new LOABoardModel()
-    ko.applyBindings(model)
     drawBoard()
     drawPosition(board)
     if not not window.GAME # check if it's not empty JS-way ;)
-      doMove(m) for m in PGN.parseGame(window.GAME)
+      for m in PGN.parseGame(window.GAME)
+        doMove(m, "load")
+    ko.applyBindings(model)
 
 # initialization from JQuery
 $ -> LOABoard().init()
