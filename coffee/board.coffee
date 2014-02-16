@@ -8,7 +8,7 @@ RADIUS = CELL_SIZE/2 - 6
 BLACK_CHECKER_COLOR = "red"
 WHITE_CHECKER_COLOR = "white"
 CHECKER_STROKE_WIDTH = 2
-CHECKER_CURSOR = "crosshair"
+CHECKER_CURSOR = "pointer"
 
 # Game-related
 BLACK_PLAYER = "Black"
@@ -32,6 +32,7 @@ LOABoard = () ->
   # Global SVG elements
   selectedChecker = null
   moveCells = []
+  lastMoveSVG = []
 
   # KnockIn.js model
   class LOABoardModel
@@ -153,8 +154,32 @@ LOABoard = () ->
         cx: x
         cy: y
 
+  drawLastMove = (move) ->
+    resetLastMove()
+    [fromX, fromY] = indexToCoord(move.from.i, move.from.j)
+    [toX, toY] = indexToCoord(move.to.i, move.to.j)
+    lastMoveSVG.push(drawLast(fromX, fromY))
+    lastMoveSVG.push(drawLast(toX, toY))
+
+  drawLast = (x, y) ->
+    delta = 2
+    back = raphael.rect(
+      x - CELL_SIZE/2 + 1
+      y - CELL_SIZE/2 + 1
+      CELL_SIZE - delta
+      CELL_SIZE - delta
+      )
+    back.attr
+      "fill": "yellow"
+      "fill-opacity": 0.3
+    back
+
+  resetLastMove = () ->
+    old.remove() for old in lastMoveSVG
+
   drawPossibleMoves = (moves) ->
     resetPossibleMoves()
+    resetLastMove()
     moveCells.push(drawPossibleMove(move)) for move in moves
 
   drawPossibleMove = (move) ->
@@ -215,6 +240,7 @@ LOABoard = () ->
     movingChecker = checkers[move.from.i][move.from.j]
     [toX, toY] = indexToCoord(move.to.i, move.to.j)
     visualizeMove(movingChecker, toX, toY, mode)
+    drawLastMove(move)
 
     checkers[move.to.i][move.to.j] = movingChecker
     checkers[move.from.i][move.from.j] = null

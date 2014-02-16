@@ -40,10 +40,12 @@
 
           <div class="panel panel-info" id="game_details">
             <div class="panel-heading">
-              <h3 class="panel-title">Game details</h3>
+              <h3 class="panel-title">
+              <a data-toggle="collapse" data-parent="#game_details" href="#game_details_main">Game details</a>
+              </h3>
             </div>
 
-            <div class="panel-body">
+            <div class="panel-body collapse in" id="game_details_main">
               <dl class="dl-horizontal">
                 <dt>To move</dt>
                 <dd data-bind="text: currentMove"></dd>
@@ -94,11 +96,10 @@
         </div>
       </div>
 
-    </div>
-
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">&copy; 2014 Ivan Veselov aka sphynx</p>
+      <div class="navbar navbar-fixed-bottom">
+        <div class="container">
+          <p class="text-muted">&copy; 2014 Ivan Veselov aka sphynx</p>
+        </div>
       </div>
     </div>
 
@@ -112,6 +113,17 @@
   <script src="/js/loa.js"></script>
   <script src="/js/board.js"></script>
   <script src="/js/pgn.js"></script>
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2297936-1', 'horna.org.ua');
+  ga('send', 'pageview');
+
+  </script>
 
   </body>
 </html>

@@ -1,9 +1,4 @@
-Before public release:
-* always highlight the last move
-* add Google Analytics
-
-Nice to have later:
-* Nice error message when the game is not 8x8 classic variant
+* nice error message when the game is not 8x8 classic variant
 * handle LOA variants (esp. 9x9 black hole)
 * support BrainKing
 * add victory conditions check and some animation
