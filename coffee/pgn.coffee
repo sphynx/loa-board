@@ -90,8 +90,8 @@ global.PGN =
 
   EVENT: "Event"
   SITE: "Site"
-  WHITE: "White"
-  BLACK: "Black"
+  WHITE: "Black" # to overcome LG bug, white player is listed as black in their PGN!
+  BLACK: "White" # to overcome LG bug, black player is listed as white in their PGN!
   RESULT: "Result"
 
   RESIGN: "resign"
