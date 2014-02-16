@@ -94,3 +94,5 @@ global.PGN =
   BLACK: "Black"
   RESULT: "Result"
 
+  RESIGN: "resign"
+

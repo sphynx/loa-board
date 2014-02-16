@@ -204,6 +204,8 @@ LOABoard = () ->
     old.remove() for old in moveCells
 
   doMove = (move, mode) ->
+    if move is PGN.RESIGN then return
+
     whiteCaptured = board[move.to.i][move.to.j] is LOA.WHITE
     blackCaptured = board[move.to.i][move.to.j] is LOA.BLACK
     isCapture = move.isCapture
