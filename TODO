@@ -2,8 +2,7 @@ Before public release:
 * always highlight the last move
 
 Nice to have later:
-* display coordinates
+* Nice error message when the game is not 8x8 classic variant
 * handle LOA variants (esp. 9x9 black hole)
 * support BrainKing
 * add victory conditions check and some animation
-* put player names in the page title

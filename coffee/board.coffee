@@ -105,6 +105,13 @@ LOABoard = () ->
           "fill": if (i+j) % 2 is 0 then "rgb(255, 215, 164)" else "rgb(211, 145, 61)"
           "stroke-width": 1
 
+  drawCoordinates = ->
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    for i in [0 .. COLS-1]
+      raphael.text(CELL_SIZE * (i + 1.5), CELL_SIZE * (COLS + 1.5), alphabet[i])
+    for j in [1 .. ROWS]
+      raphael.text(CELL_SIZE * 0.5, CELL_SIZE * (9.5 - j), j)
+
   drawPosition = (pos) ->
     for i in [0 .. COLS-1]
       checkers[i] = []
@@ -231,10 +238,13 @@ LOABoard = () ->
     raphael = Raphael("holder", 500, 500)
     model = new LOABoardModel()
     drawBoard()
+    drawCoordinates()
     drawPosition(board)
     if not not window.GAME # check if it's not empty JS-way ;)
       game = PGN.parseGame(window.GAME)
       model.initTags(game.tags)
+      document.title =
+        "LOA game: " + game.tags[PGN.WHITE] + " - " + game.tags[PGN.BLACK]
       doMove(m, LOAD) for m in game.moves
     ko.applyBindings(model)
 
