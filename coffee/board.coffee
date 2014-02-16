@@ -41,10 +41,10 @@ LOABoard = () ->
       @blackCheckers = ko.observable(0)
       @whiteMove = ko.observable(false)
 
-      @tagEvent = ko.observable("")
-      @tagWhite = ko.observable("")
-      @tagBlack = ko.observable("")
-      @tagResult = ko.observable("")
+      @tagEvent = ko.observable("none")
+      @tagWhite = ko.observable("unknown")
+      @tagBlack = ko.observable("unknown")
+      @tagResult = ko.observable("*")
 
       @actualMoves = ko.observableArray()
       @variationMoves = ko.observableArray()
