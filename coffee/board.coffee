@@ -14,6 +14,12 @@ CHECKER_CURSOR = "crosshair"
 BLACK_PLAYER = "black"
 WHITE_PLAYER = "white"
 
+
+# Move drawing modes
+LOAD = "load"  # when loading moves
+REDRAW = "redraw" # when redrawing (when we want to go to certain position)
+VARIATION = "variation" # actually entering new moves/variations with mouse
+
 LOABoard = () ->
   # INTERNAL STATE
   raphael = null
@@ -121,7 +127,7 @@ LOABoard = () ->
     selectedChecker.animate({ r: RADIUS}, 1000, "elastic") if selectedChecker?
 
   visualizeMove = (checker, x, y, mode) ->
-    if mode is "variation"
+    if mode is VARIATION
       checker.animate({ cx: x, cy: y }, 100)
       checker.animate({ r: RADIUS}, 1000, "elastic")
     else
@@ -148,7 +154,7 @@ LOABoard = () ->
       "fill-opacity": 0.3
       "cursor": "crosshair"
 
-    back.node.onclick = () -> doMove(move, "variation")
+    back.node.onclick = () -> doMove(move, VARIATION)
     back
 
   resetPossibleMoves = ->
@@ -169,13 +175,13 @@ LOABoard = () ->
         model.white(model.white() - 1)
 
     switch mode
-      when "load"
+      when LOAD
         model.lastMove(model.lastMove() + 1)
         model.variationStart(model.variationStart() + 1)
         move.number = model.lastMove()
         move.moveText = PGN.printMove(move)
         model.actualMoves.push(move)
-      when "variation"
+      when VARIATION
         model.lastMove(model.lastMove() + 1)
         move.number = model.lastMove()
         move.moveText = PGN.printMove(move)
@@ -205,7 +211,7 @@ LOABoard = () ->
     model.reset()
     removeCheckers()
     drawPosition(board)
-    doMove(m, "redraw") for m in moves
+    doMove(m, REDRAW) for m in moves
 
   # PUBLIC FUNCTIONS
 
@@ -217,7 +223,7 @@ LOABoard = () ->
     drawPosition(board)
     if not not window.GAME # check if it's not empty JS-way ;)
       for m in PGN.parseGame(window.GAME)
-        doMove(m, "load")
+        doMove(m, LOAD)
     ko.applyBindings(model)
 
 # initialization from JQuery
