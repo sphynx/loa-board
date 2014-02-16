@@ -272,6 +272,9 @@ LOABoard = () ->
       document.title =
         "LOA game: " + game.tags[PGN.WHITE] + " - " + game.tags[PGN.BLACK]
       doMove(m, LOAD) for m in game.moves
+    else
+      $("#lg_link").html("none")
+
     ko.applyBindings(model)
 
 # initialization from JQuery
