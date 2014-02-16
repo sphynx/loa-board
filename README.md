@@ -3,7 +3,7 @@ analyzing games from [LittleGolem][lg] gaming site.
 
 Game rules can be read on [Wikipedia][loa].
 
-Currently only standard 8x8 LOA is supported. More variants ("9x9 Black hole", "Scrambled eggs", etc. and game
+Currently only standard 8x8 LOA is supported. More variants ("9x9 Black hole", "Scrambled eggs", etc.) and game
 servers (BrainKing) should be added later.
 
 The board is implemented in [CoffeeScript][coffee].
