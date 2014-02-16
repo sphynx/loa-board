@@ -61,9 +61,9 @@ LOABoard = () ->
       @variationClick = (move) =>
         n = move.number
         @lastMove(n)
-        take = n - @variationStart()
-        @variationMoves(@variationMoves[0..take-1])
-        displayPositionAfterMoves(@actualMoves().concat(@variationMoves()))
+        @variationMoves(@variationMoves[0 .. n - @variationStart() - 1])
+        actualMovesPart = @actualMoves[0 .. @variationStart() - 1]
+        displayPositionAfterMoves(actualMovesPart.concat(@variationMoves()))
 
       @currentMove = ko.computed =>
         if @whiteMove()
