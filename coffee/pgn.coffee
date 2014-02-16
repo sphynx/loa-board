@@ -6,7 +6,6 @@ str = Parsimmon.string
 ows = Parsimmon.optWhitespace
 skip = Parsimmon.skip
 
-
 # Printers
 printPos = (pos) ->
   alphabet[pos.i] + (pos.j + 1)
@@ -68,13 +67,15 @@ moves = numberedMove.atLeast(1)
 tagName = lexeme(regex(/[a-zA-Z]+/))
 tagValue = lexeme(regex(/"[^"]+"/))
 tag = lexeme(seq [str("["), tagName, tagValue, str("]")])
+            .map((res) -> [res[1], res[2][1...-1]])
 tags = tag.many()
 
 # Game
 game = ows
-  .then(tags)
-  .then(moves)
-  .map((res) -> _.flatten(res))
+  .then(seq([tags, moves]))
+  .map((res) ->
+    tags:  _.object(res[0])
+    moves: _.flatten(res[1]))
 
 games = game.atLeast(1)
 
@@ -86,4 +87,10 @@ global.PGN =
   parseGames: (pgn) -> games.parse(pgn)
 
   printMove: printMove
+
+  EVENT: "Event"
+  SITE: "Site"
+  WHITE: "White"
+  BLACK: "Black"
+  RESULT: "Result"
 

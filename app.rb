@@ -10,6 +10,7 @@ end
 
 get '/lg/:id' do
   id = params[:id]
+  $game_id = id
   url = "#{LG_URL}?gid=#{id}"
 
   open(url) do |f|

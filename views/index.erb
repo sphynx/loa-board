@@ -48,22 +48,26 @@
                 <dd data-bind="text: currentMove"></dd>
 
                 <dt>Event</dt>
-                <dd>Tournament ut.loa.840.1.1</dd>
+                <dd data-bind="text: tagEvent"></dd>
 
                 <dt>White player</dt>
-                <dd>Ivan Veselov, Ukraine, 1738</dd>
+                <dd data-bind="text: tagWhite"></dd>
 
                 <dt>Black player</dt>
-                <dd>VSapristi, Canada, 1851</dd>
+                <dd data-bind="text: tagBlack"> </dd>
 
                 <dt>Little Golem link</dt>
-                <dd><a href="http://www.littlegolem.net/jsp/game/game.jsp?gid=1610844">1610844</a></dd>
+                <dd><a href="http://www.littlegolem.net/jsp/game/game.jsp?gid=<%= $game_id %>">Game <%= $game_id %></a></dd>
 
                 <dt>White pices left</dt>
-                <dd data-bind="text: white()"></dd>
+                <dd data-bind="text: whiteCheckers"></dd>
 
                 <dt>Black pieces left</dt>
-                <dd data-bind="text: black()"></dd>
+                <dd data-bind="text: blackCheckers"></dd>
+
+                <dt>Game result</dt>
+                <dd data-bind="text: tagResult"> </dd>
+
               </dl>
             </div>
           </div>
@@ -91,6 +95,12 @@
         </div>
       </div>
 
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted">&copy; 2014 Ivan Veselov aka sphynx</p>
+      </div>
     </div>
 
   <script src="/lib/jquery-1.11.0.min.js"></script>

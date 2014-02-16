@@ -1,7 +1,5 @@
 Before public release:
-* use minified versions of libs for deploy
 * always highlight the last move
-* parse and display metatags properly
 
 Nice to have later:
 * display coordinates

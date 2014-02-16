@@ -11,9 +11,8 @@ CHECKER_STROKE_WIDTH = 2
 CHECKER_CURSOR = "crosshair"
 
 # Game-related
-BLACK_PLAYER = "black"
-WHITE_PLAYER = "white"
-
+BLACK_PLAYER = "Black"
+WHITE_PLAYER = "White"
 
 # Move drawing modes
 LOAD = "load"  # when loading moves
@@ -37,9 +36,14 @@ LOABoard = () ->
   # KnockIn.js model
   class LOABoardModel
     constructor: () ->
-      @white = ko.observable(0)
-      @black = ko.observable(0)
+      @whiteCheckers = ko.observable(0)
+      @blackCheckers = ko.observable(0)
       @whiteMove = ko.observable(false)
+
+      @tagEvent = ko.observable("")
+      @tagWhite = ko.observable("")
+      @tagBlack = ko.observable("")
+      @tagResult = ko.observable("")
 
       @actualMoves = ko.observableArray()
       @variationMoves = ko.observableArray()
@@ -60,17 +64,24 @@ LOABoard = () ->
         @variationMoves(@variationMoves[0..take-1])
         displayPositionAfterMoves(@actualMoves().concat(@variationMoves()))
 
-
       @currentMove = ko.computed =>
-        if @whiteMove() then WHITE_PLAYER else BLACK_PLAYER
+        if @whiteMove()
+          WHITE_PLAYER
+        else
+          BLACK_PLAYER
 
       @changeMove = () -> @whiteMove(not @whiteMove())
 
-      @reset = () =>
-        @white(0)
-        @black(0)
-        @whiteMove(false)
+      @initTags = (tags) =>
+        @tagEvent(tags[PGN.EVENT])
+        @tagWhite(tags[PGN.WHITE])
+        @tagBlack(tags[PGN.BLACK])
+        @tagResult(tags[PGN.RESULT])
 
+      @reset = () =>
+        @whiteCheckers(0)
+        @blackCheckers(0)
+        @whiteMove(false)
 
   # PRIVATE FUNCTIONS
 
@@ -101,10 +112,10 @@ LOABoard = () ->
         switch pos[i][j]
           when LOA.BLACK
             checkers[i][j] = drawChecker(i, j, BLACK_PLAYER, BLACK_CHECKER_COLOR)
-            model.black(model.black() + 1)
+            model.blackCheckers(model.blackCheckers() + 1)
           when LOA.WHITE
             checkers[i][j] = drawChecker(i, j, WHITE_PLAYER, WHITE_CHECKER_COLOR)
-            model.white(model.white() + 1)
+            model.whiteCheckers(model.whiteCheckers() + 1)
 
   drawChecker = (i0, j0, player, color) ->
     [x, y] = indexToCoord(i0, j0)
@@ -170,9 +181,9 @@ LOABoard = () ->
     board[move.from.i][move.from.j] = LOA.EMPTY
 
     if blackCaptured
-        model.black(model.black() - 1)
+        model.blackCheckers(model.blackCheckers() - 1)
     else if whiteCaptured
-        model.white(model.white() - 1)
+        model.whiteCheckers(model.whiteCheckers() - 1)
 
     switch mode
       when LOAD
@@ -222,8 +233,9 @@ LOABoard = () ->
     drawBoard()
     drawPosition(board)
     if not not window.GAME # check if it's not empty JS-way ;)
-      for m in PGN.parseGame(window.GAME)
-        doMove(m, LOAD)
+      game = PGN.parseGame(window.GAME)
+      model.initTags(game.tags)
+      doMove(m, LOAD) for m in game.moves
     ko.applyBindings(model)
 
 # initialization from JQuery
