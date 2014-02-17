@@ -78,12 +78,14 @@ LOABoard = () ->
             @displayMoves()
         else
           @lastMove(@lastMove() - 1)
+          actualMovesPart = []
           if @lastMove() < @variationStart()
             @variationStart(0)
             @variationMoves([])
+            actualMovesPart = @actualMoves[0 .. @lastMove()]
           else
             @variationMoves(@variationMoves[0 .. @lastMove() - @variationStart() ])
-          actualMovesPart = @actualMoves[0 .. @variationStart() - 2]
+            actualMovesPart = @actualMoves[0 .. @variationStart() - 2]
           displayPositionAfterMoves(actualMovesPart.concat(@variationMoves()))
 
       @gotoNextMove = () =>
