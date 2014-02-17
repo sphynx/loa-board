@@ -49,18 +49,18 @@ LOABoard = () ->
       @actualMoves = ko.observableArray()
       @variationMoves = ko.observableArray()
       @lastMove = ko.observable(0)
-      @variationStart = ko.observable(1)
+      @variationStart = ko.observable(0)
 
       @isCurrentMove = (index) =>
         if @inMainline()
           index() + 1 is @lastMove()
         else
-          index() + 1 is @variationStart()
+          index() + 2 is @variationStart()
 
       @mainlineClick = (move) =>
         n = move.number
         @lastMove(n)
-        @variationStart(n + 1)
+        @variationStart(0)
         @variationMoves([])
         @displayMoves()
 
@@ -79,6 +79,7 @@ LOABoard = () ->
         else
           @lastMove(@lastMove() - 1)
           if @lastMove() < @variationStart()
+            @variationStart(0)
             @variationMoves([])
           else
             @variationMoves(@variationMoves[0 .. @lastMove() - @variationStart() ])
@@ -266,12 +267,13 @@ LOABoard = () ->
     switch mode
       when LOAD
         model.lastMove(model.lastMove() + 1)
-        model.variationStart(model.variationStart() + 1)
         move.number = model.lastMove()
         move.moveText = PGN.printMove(move)
         model.actualMoves.push(move)
       when VARIATION
         model.lastMove(model.lastMove() + 1)
+        if model.variationStart() is 0
+          model.variationStart(model.lastMove())
         move.number = model.lastMove()
         move.moveText = PGN.printMove(move)
         model.variationMoves.push(move)
