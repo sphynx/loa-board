@@ -82,7 +82,7 @@
 
             <div class="panel-body" data-bind="foreach: actualMoves">
               <button type="button" class="btn btn-default btn-xs actual-move"
-                      data-bind="text: moveText, click: $root.mainlineClick">
+                      data-bind="text: moveText, click: $root.mainlineClick, css: { active: $root.isCurrentMove($index) }">
               </button>
             </div>
 
@@ -109,6 +109,7 @@
   <script src="/lib/raphael-2.1.2.min.js"></script>
   <script src="/lib/underscore-1.6.0.min.js"></script>
   <script src="/lib/parsimmon-dev.js"></script>
+  <script src="/lib/mousetrap-1.4.6.min.js"></script>
 
   <script src="/js/loa.js"></script>
   <script src="/js/board.js"></script>

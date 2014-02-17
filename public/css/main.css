@@ -1,3 +1,4 @@
-.actual-move { margin-top: 5px; }
+.actual-move { margin-top: 5px; outline: none; }
+.actual-move:focus { outline: none; background-color: #ebebeb; }
 .variation-move { cursor: pointer; }
 #game_details { margin-top: 50px; }

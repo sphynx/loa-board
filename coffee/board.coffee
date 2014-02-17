@@ -49,21 +49,65 @@ LOABoard = () ->
       @actualMoves = ko.observableArray()
       @variationMoves = ko.observableArray()
       @lastMove = ko.observable(0)
-      @variationStart = ko.observable(0)
+      @variationStart = ko.observable(1)
+
+      @isCurrentMove = (index) =>
+        if @inMainline()
+          index() + 1 is @lastMove()
+        else
+          index() + 1 is @variationStart()
 
       @mainlineClick = (move) =>
         n = move.number
         @lastMove(n)
-        @variationStart(n)
+        @variationStart(n + 1)
         @variationMoves([])
-        displayPositionAfterMoves(@actualMoves[0..n-1])
+        @displayMoves()
 
       @variationClick = (move) =>
         n = move.number
         @lastMove(n)
-        @variationMoves(@variationMoves[0 .. n - @variationStart() - 1])
-        actualMovesPart = @actualMoves[0 .. @variationStart() - 1]
+        @variationMoves(@variationMoves[0 .. n - @variationStart()])
+        actualMovesPart = @actualMoves[0 .. @variationStart() - 2]
         displayPositionAfterMoves(actualMovesPart.concat(@variationMoves()))
+
+      @gotoPrevMove = () =>
+        if @inMainline()
+          if @lastMove() > 1
+            @lastMove(@lastMove() - 1)
+            @displayMoves()
+        else
+          @lastMove(@lastMove() - 1)
+          if @lastMove() < @variationStart()
+            @variationMoves([])
+          else
+            @variationMoves(@variationMoves[0 .. @lastMove() - @variationStart() ])
+          actualMovesPart = @actualMoves[0 .. @variationStart() - 2]
+          displayPositionAfterMoves(actualMovesPart.concat(@variationMoves()))
+
+      @gotoNextMove = () =>
+        if @lastMove() < @actualMoves().length and @inMainline()
+          @lastMove(@lastMove() + 1)
+          @displayMoves()
+
+      @gotoStart = () =>
+        if @inMainline()
+          @lastMove(1)
+          @displayMoves()
+
+      @gotoEnd = () =>
+        if @inMainline()
+          @lastMove(@actualMoves().length)
+          @displayMoves()
+
+      @inVariation = ko.computed =>
+        @variationMoves().length > 0
+
+      @inMainline = ko.computed =>
+        not @inVariation()
+
+      @displayMoves = () =>
+        displayPositionAfterMoves(@actualMoves[0..@lastMove() - 1])
 
       @currentMove = ko.computed =>
         if @whiteMove()
@@ -259,6 +303,12 @@ LOABoard = () ->
     drawPosition(board)
     doMove(m, REDRAW) for m in moves
 
+  initKeyboard = () ->
+    Mousetrap.bind('left', () -> model.gotoPrevMove())
+    Mousetrap.bind('right', () -> model.gotoNextMove())
+    Mousetrap.bind('down', () -> model.gotoStart(); false)
+    Mousetrap.bind('up', () -> model.gotoEnd(); false)
+
   # PUBLIC FUNCTIONS
 
   # Entry point
@@ -268,6 +318,7 @@ LOABoard = () ->
     drawBoard()
     drawCoordinates()
     drawPosition(board)
+    initKeyboard()
     if not not window.GAME # check if it's not empty JS-way ;)
       game = PGN.parseGame(window.GAME)
       model.initTags(game.tags)
