@@ -122,9 +122,12 @@ LOABoard = () ->
 
       @initTags = (tags) =>
         @tagEvent(tags[PGN.EVENT])
-        @tagWhite(tags[PGN.WHITE])
-        @tagBlack(tags[PGN.BLACK])
-        @tagResult(tags[PGN.RESULT])
+
+        # Black/white exchanged to overcome LG bug, white player is
+        # listed as black in their PGN!
+        @tagWhite(tags[PGN.BLACK])
+        @tagBlack(tags[PGN.WHITE])
+        @tagResult(PGN.printResult(tags[PGN.RESULT]))
 
       @reset = () =>
         @whiteCheckers(0)

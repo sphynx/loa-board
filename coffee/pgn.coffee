@@ -46,6 +46,14 @@ draw = str "1/2-1/2"
 inProgress = str "*"
 gameResult = lexeme(whiteWon.or(blackWon).or(draw).or(inProgress))
 
+printResult = (result) ->
+  switch result
+    when "1-0" then "Black won"
+    when "0-1" then "White won"
+    when "1/2-1/2" then "Draw"
+    when "*" then "Game in progress"
+    else result
+
 # Numbered move (2 plies or 1 ply with the game result)
 numberedOkMove =
   lexeme(seq([moveNumber, move, move])
@@ -87,11 +95,12 @@ global.PGN =
   parseGames: (pgn) -> games.parse(pgn)
 
   printMove: printMove
+  printResult: printResult
 
   EVENT: "Event"
   SITE: "Site"
-  WHITE: "Black" # to overcome LG bug, white player is listed as black in their PGN!
-  BLACK: "White" # to overcome LG bug, black player is listed as white in their PGN!
+  WHITE: "White"
+  BLACK: "Black"
   RESULT: "Result"
 
   RESIGN: "resign"
