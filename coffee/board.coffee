@@ -1,6 +1,6 @@
 # Constants
 
-# Visual
+# Visuals
 CELL_SIZE = 50
 RADIUS = CELL_SIZE/2 - 6
 BLACK_CHECKER_COLOR = "red"
@@ -8,8 +8,18 @@ WHITE_CHECKER_COLOR = "white"
 CHECKER_STROKE_WIDTH = 2
 CHECKER_CURSOR = "pointer"
 
-LIGHT_SQUARE = "rgb(255, 215, 164)"
-DARK_SQUARE = "rgb(211, 145, 61)"
+LAST_MOVE_COLOR = "yellow"
+LAST_MOVE_OPACITY = 0.3
+
+POSSIBLE_MOVE_COLOR = "green"
+POSSIBLE_MOVE_OPACITY = 0.3
+POSSIBLE_MOVE_CURSOR = "crosshair"
+
+LIGHT_SQUARE_COLOR = "rgb(255, 215, 164)"
+DARK_SQUARE_COLOR = "rgb(211, 145, 61)"
+
+BLACK_HOLE_COLOR = "black"
+BLACK_HOLE_OPACITY = 0.6
 
 # Game-related
 BLACK_PLAYER = "Black"
@@ -50,6 +60,7 @@ LOABoard = (variant) ->
       @tagWhite = ko.observable("unknown")
       @tagBlack = ko.observable("unknown")
       @tagResult = ko.observable("*")
+      @tagVariant = ko.observable(variant)
 
       @actualMoves = ko.observableArray()
       @variationMoves = ko.observableArray()
@@ -159,7 +170,7 @@ LOABoard = (variant) ->
       for j in [1 .. rows]
         field = raphael.rect(CELL_SIZE * i, CELL_SIZE * j, CELL_SIZE, CELL_SIZE, 0)
         field.attr
-          "fill": if (i+j) % 2 is 0 then LIGHT_SQUARE else DARK_SQUARE
+          "fill": if (i+j) % 2 is 0 then LIGHT_SQUARE_COLOR else DARK_SQUARE_COLOR
 
   drawCoordinates = () ->
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -202,8 +213,8 @@ LOABoard = (variant) ->
     [x, y] = indexToCoord(i0, j0)
     hole = raphael.rect(x - CELL_SIZE/2, y - CELL_SIZE/2, CELL_SIZE, CELL_SIZE, 0)
     hole.attr
-      "fill": "black"
-      "fill-opacity": 0.6
+      "fill": BLACK_HOLE_COLOR
+      "fill-opacity": BLACK_HOLE_OPACITY
     hole
 
   animateSelect = (checker) ->
@@ -241,8 +252,8 @@ LOABoard = (variant) ->
       CELL_SIZE - delta
       )
     back.attr
-      "fill": "yellow"
-      "fill-opacity": 0.3
+      "fill": LAST_MOVE_COLOR
+      "fill-opacity": LAST_MOVE_OPACITY
     back
 
   resetLastMove = () ->
@@ -264,9 +275,9 @@ LOABoard = (variant) ->
       )
 
     back.attr
-      "fill": "green"
-      "fill-opacity": 0.3
-      "cursor": "crosshair"
+      "fill": POSSIBLE_MOVE_COLOR
+      "fill-opacity": POSSIBLE_MOVE_OPACITY
+      "cursor": POSSIBLE_MOVE_CURSOR
 
     back.node.onclick = () -> doMove(move, VARIATION)
     back
