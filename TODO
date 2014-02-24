@@ -1,7 +1,8 @@
-* nice error message when the game is not 8x8 classic variant
-* handle LOA variants (esp. 9x9 black hole)
 * support BrainKing
 * add victory conditions check and some animation
-* put all color/effects strings in constants
 * add a field and button for loading specific game id
-
+* do not delete variation moves when navigating back
+* add help
+* cache position in the move list nodes
+* add back/forward button for tablet users
+* refactor moves navigation in the model
