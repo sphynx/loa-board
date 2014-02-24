@@ -3,7 +3,13 @@
 # Useful constants
 WHITE = 'w'
 BLACK = 'b'
+HOLE = 'h'
 EMPTY = ' '
+
+VARIANT_8x8 = "8x8"
+VARIANT_SCRAMBLE = "Scramble"
+VARIANT_BLACKHOLE = "BlackHole"
+VARIANT_QUICK = "Quick"
 
 replicate = (n, str) ->
   _(n).times(-> str)
@@ -14,6 +20,13 @@ genNormalStartPos = (rows, cols) ->
   arr = replicate(rows-2, white_row)
   arr.unshift(black_row)
   arr.push(black_row)
+  arr
+
+genBlackHolePos = (rows, cols) ->
+  arr = genNormalStartPos(rows, cols)
+  if cols % 2 is 1 and rows % 2 is 1
+    holeRow = arr[(cols-1) / 2]
+    arr[(cols-1) / 2] = holeRow.replaceAt((rows-1) / 2, HOLE)
   arr
 
 # Functions
@@ -29,19 +42,32 @@ parsePosition = (rows) ->
   # array elements as separate arguments
   _.zip.apply(null, tboard)
 
-startPosition = (rows, cols) ->
-  parsePosition(genNormalStartPos(rows, cols))
+startPosition = (variant) ->
+  switch variant
+    when VARIANT_8x8
+      pos = genNormalStartPos(8, 8)
+    when VARIANT_BLACKHOLE
+      pos = genBlackHolePos(9, 9)
+    else
+      pos = genNormalStartPos(8, 8)
+  parsePosition(pos)
+
+isEmpty = (cell) ->
+  cell is EMPTY or cell is HOLE
+
+isntEmpty = (cell) ->
+  cell is WHITE or cell is BLACK
 
 verticalAction = (x0, _y0, board) ->
   _.reduce(
     board[x0],
-    (acc, c) -> if c is EMPTY then acc else acc + 1,
+    (acc, c) -> if isEmpty(c) then acc else acc + 1,
     0)
 
 horizontalAction = (_x0, y0, board) ->
   _.reduce(
       board,
-      (acc, col) -> if col[y0] is EMPTY then acc else acc + 1,
+      (acc, col) -> if isEmpty(col[y0]) then acc else acc + 1,
       0)
 
 nwDiagonalAction = (x0, y0, board) ->
@@ -52,12 +78,12 @@ nwDiagonalAction = (x0, y0, board) ->
   i = x0
   j = y0
   while i < columns and j >= 0
-    if board[i++][j--] isnt EMPTY then action++
+    action++ if isntEmpty(board[i++][j--])
 
   i = x0
   j = y0
   while i > 0 and j < rows-1
-    if board[--i][++j] isnt EMPTY then action++
+    action++ if isntEmpty(board[--i][++j])
 
   action
 
@@ -69,12 +95,12 @@ neDiagonalAction = (x0, y0, board) ->
   i = x0
   j = y0
   while i < columns and j < rows
-    if board[i++][j++] isnt EMPTY then action++
+    action++ if isntEmpty(board[i++][j++])
 
   i = x0
   j = y0
   while i > 0 and j > 0
-    if board[--i][--j] isnt EMPTY then action++
+    action++ if isntEmpty(board[--i][--j])
 
   action
 
@@ -94,14 +120,14 @@ checkMove = (x0, y0, dx, dy, action, color, board) ->
 
   # Check the last cell, it should not have our own checker
   if 0 <= i < cols and 0 <= j < rows and board[i][j] isnt color
-    [ from: {i: x0, j: y0}, to: {i: i, j: j}, isCapture: board[i][j] isnt EMPTY ]
+    [ from: {i: x0, j: y0}, to: {i: i, j: j}, isCapture: isntEmpty(board[i][j]) ]
   else
     [] # no moves
 
 possibleMoves = (x0, y0, board) ->
   checker = board[x0][y0]
 
-  if checker is EMPTY then return []
+  if isEmpty(checker) then return []
 
   vertical = verticalAction(x0, y0, board)
   horizontal = horizontalAction(x0, y0, board)
@@ -133,6 +159,12 @@ global.LOA =
   WHITE : WHITE
   BLACK : BLACK
   EMPTY : EMPTY
+  HOLE : HOLE
+  VARIANT_8x8 : VARIANT_8x8
+  VARIANT_SCRAMBLE : VARIANT_SCRAMBLE
+  VARIANT_BLACKHOLE : VARIANT_BLACKHOLE
+  VARIANT_QUICK : VARIANT_QUICK
+
   possibleMoves : possibleMoves
   startPosition : startPosition
   parsePosition : parsePosition

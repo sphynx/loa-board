@@ -1,8 +1,6 @@
 # Constants
 
 # Visual
-ROWS = 8
-COLS = 8
 CELL_SIZE = 50
 RADIUS = CELL_SIZE/2 - 6
 BLACK_CHECKER_COLOR = "red"
@@ -10,22 +8,29 @@ WHITE_CHECKER_COLOR = "white"
 CHECKER_STROKE_WIDTH = 2
 CHECKER_CURSOR = "pointer"
 
+LIGHT_SQUARE = "rgb(255, 215, 164)"
+DARK_SQUARE = "rgb(211, 145, 61)"
+
 # Game-related
 BLACK_PLAYER = "Black"
 WHITE_PLAYER = "White"
 
 # Move drawing modes
-LOAD = "load"  # when loading moves
+LOAD = "load"  # when loading moves from the server
 REDRAW = "redraw" # when redrawing (when we want to go to certain position)
 VARIATION = "variation" # actually entering new moves/variations with mouse
 
-LOABoard = () ->
+LOABoard = (variant) ->
   # INTERNAL STATE
   raphael = null
   model = null
+  variant = variant
 
-  # board: internal array
-  board = LOA.startPosition(ROWS, COLS)
+  rows = if variant is LOA.VARIANT_BLACKHOLE then 9 else 8
+  cols = if variant is LOA.VARIANT_BLACKHOLE then 9 else 8
+
+  # internal board array
+  board = LOA.startPosition(variant)
   # mapping between indices and SVG checker elements
   checkers = []
 
@@ -118,7 +123,8 @@ LOABoard = () ->
         else
           BLACK_PLAYER
 
-      @changeMove = () -> @whiteMove(not @whiteMove())
+      @changeMove = () ->
+        @whiteMove(not @whiteMove())
 
       @initTags = (tags) =>
         @tagEvent(tags[PGN.EVENT])
@@ -140,33 +146,32 @@ LOABoard = () ->
   # but it looks more complicated now
   indexToCoord = (i0, j0) ->
     [ CELL_SIZE * (i0 + 1.5)
-    , CELL_SIZE * (ROWS - j0 + 0.5)
+    , CELL_SIZE * (rows - j0 + 0.5)
     ]
 
   coordToIndex = (x, y) ->
     [ x / CELL_SIZE - 1.5
-    , ROWS + 0.5 - y / CELL_SIZE
+    , rows + 0.5 - y / CELL_SIZE
     ]
 
-  drawBoard = ->
-    for i in [1 .. COLS]
-      for j in [1 .. ROWS]
+  drawBoard = () ->
+    for i in [1 .. cols]
+      for j in [1 .. rows]
         field = raphael.rect(CELL_SIZE * i, CELL_SIZE * j, CELL_SIZE, CELL_SIZE, 0)
         field.attr
-          "fill": if (i+j) % 2 is 0 then "rgb(255, 215, 164)" else "rgb(211, 145, 61)"
-          "stroke-width": 1
+          "fill": if (i+j) % 2 is 0 then LIGHT_SQUARE else DARK_SQUARE
 
-  drawCoordinates = ->
+  drawCoordinates = () ->
     alphabet = "abcdefghijklmnopqrstuvwxyz"
-    for i in [0 .. COLS-1]
-      raphael.text(CELL_SIZE * (i + 1.5), CELL_SIZE * (COLS + 1.5), alphabet[i])
-    for j in [1 .. ROWS]
-      raphael.text(CELL_SIZE * 0.5, CELL_SIZE * (9.5 - j), j)
+    for i in [0 .. cols-1]
+      raphael.text(CELL_SIZE * (i + 1.5), CELL_SIZE * (cols + 1.5), alphabet[i])
+    for j in [1 .. rows]
+      raphael.text(CELL_SIZE * 0.5, CELL_SIZE * (cols - j + 1.5), j)
 
   drawPosition = (pos) ->
-    for i in [0 .. COLS-1]
+    for i in [0 .. cols-1]
       checkers[i] = []
-      for j in [0 .. ROWS-1]
+      for j in [0 .. rows-1]
         switch pos[i][j]
           when LOA.BLACK
             checkers[i][j] = drawChecker(i, j, BLACK_PLAYER, BLACK_CHECKER_COLOR)
@@ -174,6 +179,8 @@ LOABoard = () ->
           when LOA.WHITE
             checkers[i][j] = drawChecker(i, j, WHITE_PLAYER, WHITE_CHECKER_COLOR)
             model.whiteCheckers(model.whiteCheckers() + 1)
+          when LOA.HOLE
+            checkers[i][j] = drawBlackHole(i, j)
 
   drawChecker = (i0, j0, player, color) ->
     [x, y] = indexToCoord(i0, j0)
@@ -191,18 +198,32 @@ LOABoard = () ->
       drawPossibleMoves(LOA.possibleMoves(x0, y0, board))
     checker
 
-  animateSelect = (checker) ->
-    checker.animate({ r: RADIUS + 2}, 1000, "elastic")
-    selectedChecker.animate({ r: RADIUS}, 1000, "elastic") if selectedChecker?
+  drawBlackHole = (i0, j0) ->
+    [x, y] = indexToCoord(i0, j0)
+    hole = raphael.rect(x - CELL_SIZE/2, y - CELL_SIZE/2, CELL_SIZE, CELL_SIZE, 0)
+    hole.attr
+      "fill": "black"
+      "fill-opacity": 0.6
+    hole
 
-  visualizeMove = (checker, x, y, mode) ->
+  animateSelect = (checker) ->
+    checker.animate({ r: RADIUS + 2 }, 1000, "elastic")
+    selectedChecker.animate({ r: RADIUS }, 1000, "elastic") if selectedChecker?
+
+  visualizeMove = (checker, x, y, mode, intoBlackHole) ->
     if mode is VARIATION
       checker.animate({ cx: x, cy: y }, 100)
-      checker.animate({ r: RADIUS}, 1000, "elastic")
+      if intoBlackHole
+        checker.animate({ r: RADIUS }, 500, "elastic", () -> checker.remove())
+      else
+        checker.animate({ r: RADIUS }, 1000, "elastic")
     else
-      checker.attr
-        cx: x
-        cy: y
+      if intoBlackHole
+        checker.remove()
+      else
+        checker.attr
+          cx: x
+          cy: y
 
   drawLastMove = (move) ->
     resetLastMove()
@@ -258,16 +279,24 @@ LOABoard = () ->
 
     whiteCaptured = board[move.to.i][move.to.j] is LOA.WHITE
     blackCaptured = board[move.to.i][move.to.j] is LOA.BLACK
+    intoBlackHole = board[move.to.i][move.to.j] is LOA.HOLE
     isCapture = move.isCapture
 
     # update model and board array
-    board[move.to.i][move.to.j] = board[move.from.i][move.from.j]
+    if not intoBlackHole
+      board[move.to.i][move.to.j] = board[move.from.i][move.from.j]
     board[move.from.i][move.from.j] = LOA.EMPTY
 
+    # update checker counters
     if blackCaptured
-        model.blackCheckers(model.blackCheckers() - 1)
+      model.blackCheckers(model.blackCheckers() - 1)
     else if whiteCaptured
+      model.whiteCheckers(model.whiteCheckers() - 1)
+    else if intoBlackHole
+      if model.whiteMove()
         model.whiteCheckers(model.whiteCheckers() - 1)
+      else
+        model.blackCheckers(model.blackCheckers() - 1)
 
     switch mode
       when LOAD
@@ -292,19 +321,20 @@ LOABoard = () ->
 
     movingChecker = checkers[move.from.i][move.from.j]
     [toX, toY] = indexToCoord(move.to.i, move.to.j)
-    visualizeMove(movingChecker, toX, toY, mode)
+    visualizeMove(movingChecker, toX, toY, mode, intoBlackHole)
     drawLastMove(move)
 
-    checkers[move.to.i][move.to.j] = movingChecker
+    if not intoBlackHole
+      checkers[move.to.i][move.to.j] = movingChecker
     checkers[move.from.i][move.from.j] = null
 
   removeCheckers = () ->
-    for i in [0..COLS-1]
-      for j in [0..ROWS-1]
+    for i in [0..cols-1]
+      for j in [0..rows-1]
         checkers[i][j].remove() if checkers[i][j]?
 
   displayPositionAfterMoves = (moves) ->
-    board = LOA.startPosition(ROWS, COLS)
+    board = LOA.startPosition(variant)
     model.reset()
     removeCheckers()
     drawPosition(board)
@@ -320,7 +350,7 @@ LOABoard = () ->
 
   # Entry point
   init: ->
-    raphael = Raphael("holder", 500, 500)
+    raphael = Raphael("holder", 550, 550)
     model = new LOABoardModel()
     drawBoard()
     drawCoordinates()
@@ -338,4 +368,4 @@ LOABoard = () ->
     ko.applyBindings(model)
 
 # initialization from JQuery
-$ -> LOABoard().init()
+$ -> LOABoard(window.VARIANT).init()
