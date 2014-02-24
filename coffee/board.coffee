@@ -98,7 +98,7 @@ LOABoard = (variant) ->
           if @lastMove() < @variationStart()
             @variationStart(0)
             @variationMoves([])
-            actualMovesPart = @actualMoves[0 .. @lastMove()]
+            actualMovesPart = @actualMoves[0 .. @lastMove() - 1]
           else
             @variationMoves(@variationMoves[0 .. @lastMove() - @variationStart() ])
             actualMovesPart = @actualMoves[0 .. @variationStart() - 2]
