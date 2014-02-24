@@ -40,6 +40,17 @@ genQuickPos = () ->
   ,[ EMPTY, EMPTY, BLACK, BLACK, BLACK, BLACK, EMPTY, EMPTY ].join("")
   ]
 
+genScramblePos = () ->
+  [[ EMPTY, WHITE, BLACK, WHITE, BLACK, WHITE, BLACK, EMPTY ].join("")
+  ,[ BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK ].join("")
+  ,[ BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK ].join("")
+  ,[ BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK ].join("")
+  ,[ EMPTY, BLACK, WHITE, BLACK, WHITE, BLACK, WHITE, EMPTY ].join("")
+  ]
+
 # Functions
 parsePosition = (rows) ->
   convCell = (c) -> if c is "." then EMPTY else c.toLowerCase()
@@ -61,6 +72,8 @@ startPosition = (variant) ->
       pos = genBlackHolePos(9, 9)
     when VARIANT_QUICK
       pos = genQuickPos()
+    when VARIANT_SCRAMBLE
+      pos = genScramblePos()
     else
       pos = genNormalStartPos(8, 8)
   parsePosition(pos)
