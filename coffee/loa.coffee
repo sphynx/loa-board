@@ -29,6 +29,17 @@ genBlackHolePos = (rows, cols) ->
     arr[(cols-1) / 2] = holeRow.replaceAt((rows-1) / 2, HOLE)
   arr
 
+genQuickPos = () ->
+  [[ EMPTY, EMPTY, BLACK, BLACK, BLACK, BLACK, EMPTY, EMPTY ].join("")
+  ,[ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE ].join("")
+  ,[ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ].join("")
+  ,[ EMPTY, EMPTY, BLACK, BLACK, BLACK, BLACK, EMPTY, EMPTY ].join("")
+  ]
+
 # Functions
 parsePosition = (rows) ->
   convCell = (c) -> if c is "." then EMPTY else c.toLowerCase()
@@ -48,6 +59,8 @@ startPosition = (variant) ->
       pos = genNormalStartPos(8, 8)
     when VARIANT_BLACKHOLE
       pos = genBlackHolePos(9, 9)
+    when VARIANT_QUICK
+      pos = genQuickPos()
     else
       pos = genNormalStartPos(8, 8)
   parsePosition(pos)
