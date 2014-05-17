@@ -63,18 +63,18 @@ GAME_NO_MOVES = """
 """
 valid = (pgn, expMoves, gameNo) ->
   games = PGN.parseGames(pgn)
-  moves = _.map(games, (x) -> x.length)
+  moves = _.map(games, (x) -> x.moves.length)
   deepEqual(moves, expMoves, gameNo)
 
 invalid = (pgn, ident) ->
   throws((() -> PGN.parseGames(pgn)), ident)
 
 numberOfCaptures = (pgn, exp) ->
-  moves = PGN.parseGame(pgn)
-  cats = _(moves).countBy((x) -> if x.isCapture then 'capture' else 'normal')
+  game = PGN.parseGame(pgn)
+  cats = _(game.moves).countBy((x) -> if x.isCapture then 'capture' else 'normal')
   equal(cats.capture, exp, "Number of captures in GAME0")
 
-test("PGN parsing", ->
+test("PGN parsing", () ->
   valid("1. f1-f3 *", [1], "One move game")
   valid("1.f1-f3*", [1], "One move game without spaces")
   valid("1. f1-f3 1-0", [1], "One move game with result")
