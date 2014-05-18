@@ -27,14 +27,7 @@ def detect_loa_variant(url)
   end
 end
 
-get '/' do
-  $pgn = ''
-  $variant = '8x8'
-  erb :index
-end
-
-get '/lg/:id' do
-  id = params[:id]
+def render_game(id)
   $game_id = id
 
   pgn_url = "#{LG_PGN_URL}?gid=#{id}"
@@ -44,5 +37,21 @@ get '/lg/:id' do
   $variant = detect_loa_variant(game_url)
 
   erb :index
+end
+
+get '/' do
+  $pgn = ''
+  $variant = '8x8'
+  erb :index
+end
+
+get '/lg/:id' do
+  id = params[:id]
+  render_game(id)
+end
+
+get '/lg-:id' do
+  id = params[:id]
+  render_game(id)
 end
 
