@@ -3,8 +3,13 @@
 # Visuals
 CELL_SIZE = 50
 RADIUS = CELL_SIZE/2 - 6
+
 BLACK_CHECKER_COLOR = "red"
+BLACK_CHECKER_STROKE_COLOR = "black"
+
 WHITE_CHECKER_COLOR = "white"
+WHITE_CHECKER_STROKE_COLOR = "black"
+
 CHECKER_STROKE_WIDTH = 2
 CHECKER_CURSOR = "pointer"
 
@@ -202,20 +207,21 @@ LOABoard = (variant) ->
       for j in [0 .. rows-1]
         switch pos[i][j]
           when LOA.BLACK
-            checkers[i][j] = drawChecker(i, j, BLACK_PLAYER, BLACK_CHECKER_COLOR)
+            checkers[i][j] = drawChecker(i, j, BLACK_PLAYER, BLACK_CHECKER_COLOR, BLACK_CHECKER_STROKE_COLOR)
             model.blackCheckers(model.blackCheckers() + 1)
           when LOA.WHITE
-            checkers[i][j] = drawChecker(i, j, WHITE_PLAYER, WHITE_CHECKER_COLOR)
+            checkers[i][j] = drawChecker(i, j, WHITE_PLAYER, WHITE_CHECKER_COLOR, WHITE_CHECKER_STROKE_COLOR)
             model.whiteCheckers(model.whiteCheckers() + 1)
           when LOA.HOLE
             checkers[i][j] = drawBlackHole(i, j)
 
-  drawChecker = (i0, j0, player, color) ->
+  drawChecker = (i0, j0, player, color, strokeColor) ->
     [x, y] = indexToCoord(i0, j0)
     checker = raphael.circle(x, y, RADIUS)
     checker.player = player
     checker.attr
       "fill": color
+      "stroke": strokeColor
       "stroke-width": CHECKER_STROKE_WIDTH
       "cursor": CHECKER_CURSOR
     checker.node.onclick = () ->
@@ -368,7 +374,14 @@ LOABoard = (variant) ->
     drawPosition(board)
     doMove(m, REDRAW) for m in moves
 
-  initKeyboard = () ->
+  initControls = () ->
+    # on screen buttons
+    $("#btnStart").click(() => model.gotoStart());
+    $("#btnPrev").click(() => model.gotoPrevMove());
+    $("#btnNext").click(() => model.gotoNextMove());
+    $("#btnEnd").click(() => model.gotoEnd());
+
+    # keyboard
     Mousetrap.bind('left', () -> model.gotoPrevMove())
     Mousetrap.bind('right', () -> model.gotoNextMove())
     Mousetrap.bind('down', () -> model.gotoStart(); false)
@@ -383,7 +396,7 @@ LOABoard = (variant) ->
     drawBoard()
     drawCoordinates()
     drawPosition(board)
-    initKeyboard()
+    initControls()
     if not not window.GAME # check if it's not empty JS-way ;)
       game = PGN.parseGame(window.GAME)
       model.initTags(game.tags)
