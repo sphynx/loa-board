@@ -62,11 +62,29 @@ LOABoard = (variant) ->
       @tagResult = ko.observable("*")
       @tagVariant = ko.observable(variant)
 
+      # displayed actual game moves
       @actualMoves = ko.observableArray()
+
+      # displayed variation moves
       @variationMoves = ko.observableArray()
+
+      # what is meant by last move here? lastMove = it is a number of
+      # last move (starting from 1) made in the current position it
+      # can be either actual or variation
       @lastMove = ko.observable(0)
+
+      # number of a first move in variation or 0 if there is no
+      # variation at all
       @variationStart = ko.observable(0)
 
+      # this is view helper, used to check if 0-based index in array
+      # of actual moves points to a move which should be highlighted
+      # as "current". It should be highlighted in two cases: if it is
+      # a last move or it is a last move before variation starts.
+      #
+      # it's not cool that we need to 1) expose this helper in a
+      # model, even though it looks like it belongs to a view.
+      # 2) we need to convert from 1-based moves to 0-based indices.
       @isCurrentMove = (index) =>
         if @inMainline()
           index() + 1 is @lastMove()
@@ -74,8 +92,7 @@ LOABoard = (variant) ->
           index() + 2 is @variationStart()
 
       @mainlineClick = (move) =>
-        n = move.number
-        @lastMove(n)
+        @lastMove(move.number)
         @variationStart(0)
         @variationMoves([])
         @displayMoves()
